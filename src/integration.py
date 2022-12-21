@@ -98,6 +98,10 @@ status_handler_map = {
         "name": "mode",
         "handler": gettext
     },
+    "/status/cfgtype": {
+        "name": "configType",
+        "handler": gettext
+    },
     "/status/oat": {
         "name": "outsideAirTemperature",
         "handler": getint
@@ -225,21 +229,12 @@ odu_status_handler_map = {
     },
 }
 
-# def handle_status(node):
-#     status = { }
-#     for k, v in status_handler_map.items():
-#         subNode = findnode(node, k)
-#         status.update({ v["name"]: v["handler"](subNode) })
-#     return status
-
 def handle_xml_response(node, handler_map):
     status = { }
     for k, v in handler_map.items():
         subNode = findnode(node, k)
         status.update({ v["name"]: v["handler"](subNode) })
     return status
-
-# def handle_status_xml(xml: bytes)
 
 def findnode(root, xpath):
     xpath = xpath[1:] if xpath.startswith("/") else xpath
@@ -266,6 +261,13 @@ class RequestHandler:
         self.raw_request = b""
         self.raw_response = b""
 
+    def parse_form_data(self, form_data):
+        # Convert URL encoded HTML form data into a dictionary
+        values = { k:urllib.parse.unquote(v) for (k,v) in
+            [entry.split(b"=") for entry in form_data.split(b"&")]
+        }
+        return values
+
     def handle_request(self, data: bytes):
         if data:
             if data.startswith(b">\r\n"):
@@ -275,8 +277,8 @@ class RequestHandler:
                 self.current_direction = StreamDirection.Incoming
                 data = data[3:]
 
-            print(f">>> binary data direction: {self.current_direction}")
-            print(data)
+            # print(f">>> binary data direction: {self.current_direction}")
+            # print(data)
 
             if self.current_direction == StreamDirection.Outgoing:
                 self.raw_request += data
@@ -284,29 +286,24 @@ class RequestHandler:
                 self.raw_response += data
             return
 
-        print("Processing request...")
         request = HttpRequest(self.raw_request)
+        print(f"Processing request {request.method} {request.url.path}")
         if request.method == "POST":
-            # match = re.match("/systems/([^/]+)/status", request.raw_url)
             for path, map in response_handler_map.items():
                 match = re.match(path, request.raw_url)
                 if match:
                     sn = match.group(1)
                     status = {
-                        "sn": sn
+                        "serialNumber": sn
                     }
 
-                    print(f"Body: {request.body}")
-
-                    # Convert URL encoded HTML form data into a dictionary
-                    values = { k:urllib.parse.unquote(v) for (k,v) in
-                        [entry.split(b"=") for entry in request.body.split(b"&")]
-                    }
-                    payload = values[b"data"]
+                    # print(f"Body: {request.body}")
+                    form_data = self.parse_form_data(request.body)
+                    payload = form_data[b"data"]
                     print(f"Payload: {payload}")
 
                     tree = ET.fromstring(payload)
-                    status = handle_xml_response(tree, map)
+                    status.update(handle_xml_response(tree, map))
                     print(json.dumps(status))
                     break
 
@@ -335,7 +332,6 @@ class RequestHandler:
                             break
                         else:
                             print(f"Server: {msg.data}")
-                            # await ws.send_str(msg.data + '/answer')
                     elif msg.type == aiohttp.WSMsgType.BINARY:
                         self.handle_request(msg.data)
                     elif msg.type == aiohttp.WSMsgType.ERROR:
