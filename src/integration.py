@@ -306,7 +306,7 @@ class RequestHandler:
                     print(f"Payload: {payload}")
 
                     tree = ET.fromstring(payload)
-                    status = handle_status(tree)
+                    status = handle_xml_response(tree, map)
                     print(json.dumps(status))
                     break
 
