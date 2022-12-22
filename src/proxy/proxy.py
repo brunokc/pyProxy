@@ -1,28 +1,19 @@
 """
 Python HTTPS proxy server with asyncio streams
-(from https://gist.github.com/2minchul/609255051b7ffcde023be93572b25101)
+(based on the work found at https://gist.github.com/2minchul/609255051b7ffcde023be93572b25101)
 """
 
 import asyncio
 import async_timeout
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
-from httprequest import HttpRequest
-from typing import Tuple, Optional
-from urllib.parse import urlparse
+from typing import Tuple
+
+from proxy.httprequest import HttpRequest
 
 StreamPair = Tuple[StreamReader, StreamWriter]
 
-LF = b'\n'
-CRLF = b'\r\n'
 BUFFER_SIZE = 1024
-PROXY_IP = ""
-PROXY_PORT = 8080
-WS_IP = "192.168.1.182"
-WS_PORT = 8787
-RELAY_SERVER = "www.api.eng.bryant.com"
-RELAY_PORT = 80
-
 
 class MultiWriterStream(StreamWriter):
     def __init__(self, *writers):
@@ -114,9 +105,8 @@ class RequestHandler:
             hostname = self._forward_to_host
             port = self._forward_to_port
 
-        host = request.headers["Host"] if "Host" in request.headers else None
-        if host:
-            ws_incoming, ws_outgoing = self._wsserver.get_streams(host)
+        host = request.headers["Host"]
+        ws_incoming, ws_outgoing = self._wsserver.get_streams(host)
 
         remote_reader, remote_writer = await asyncio.open_connection(hostname, port)
         if ws_incoming and ws_outgoing:
@@ -153,7 +143,7 @@ class RequestHandler:
             try:
                 async with async_timeout.timeout(30):
                     with closing(writer):
-                        data = await reader.readuntil(CRLF + CRLF)
+                        data = await reader.readuntil(b"\r\n\r\n")
                         print(f"Proxy: received {data}")
 
                         request = HttpRequest(data)
@@ -188,138 +178,3 @@ class RequestHandler:
 
         async with server:
             await server.serve_forever()
-
-
-import aiohttp
-import json
-from aiohttp import web
-from enum import Enum
-
-class StreamDirection(Enum):
-    Outgoing = 1,
-    Incoming = 2
-
-class WebSocketStream:
-    def __init__(self, ws, direction: StreamDirection):
-        self.ws = ws
-        self.direction = direction
-        if direction == StreamDirection.Incoming:
-            self.data = b"<" + CRLF
-        else:
-            self.data = b">" + CRLF
-
-    def write(self, data: bytes):
-        if not self.ws.closed:
-            self.data += data
-
-    def close(self):
-        pass
-
-    async def drain(self):
-        if not self.ws.closed:
-            await self.ws.send_bytes(self.data)
-            self.data = b""
-
-
-# class WebSocket:
-#     def __init__(self):
-#         pass
-
-#     async def handle_message(self, msg):
-
-class WebSocketServer:
-    def __init__(self, address, port):
-        self._address = address
-        self._port = port
-        self._intercept_clients = {}
-
-    def get_streams(self, host):
-        if host in self._intercept_clients:
-            ws = self._intercept_clients[host]
-            if ws:
-                return (
-                    WebSocketStream(ws, StreamDirection.Incoming),
-                    WebSocketStream(ws, StreamDirection.Outgoing)
-                    )
-
-    # async def process_request(self, host, raw_request):
-    #     if host in self._intercept_clients:
-    #         ws = self._intercept_clients[host]
-    #         payload = {
-    #             "host": host,
-    #             "raw_request": raw_request
-    #         }
-    #         await ws.send_json(payload)
-
-    async def handle_json(self, data, ws, clientip, port):
-        if data["command"] == "listen":
-            args = data["args"]
-            host = args["host"]
-            print(f"WebSocket: registering LISTEN client for {host} (caller: {clientip}:{port})")
-            self._intercept_clients.update({ host: ws })
-
-    async def handle_binary(self, data):
-        print("WebSocket: received binary payload")
-        print(data)
-
-    async def wshandler(self, request):
-        peername = request.transport.get_extra_info("peername")
-        if peername is not None:
-            clientip, port = peername
-        print(f"WebSocket: connection from {clientip}:{port}")
-
-        ws = web.WebSocketResponse()
-        await ws.prepare(request)
-
-        async for msg in ws:
-            print(f"WebSocket: new message {msg!r}")
-            if msg.type == aiohttp.WSMsgType.TEXT:
-                if msg.data == "close":
-                    await ws.close()
-                else:
-                    await self.handle_json(json.loads(msg.data), ws, clientip, port)
-            elif msg.type == aiohttp.WSMsgType.BINARY:
-                await self.handle_binary(msg.data)
-            elif msg.type == aiohttp.WSMsgType.ERROR:
-                print(f"WebSocket: connection closed with exception {ws.exception()}")
-
-        # if host in self._intercept_clients:
-        #     del self._intercept_clients[host]
-
-        print("WebSocket: connection closed")
-
-    async def run(self):
-        # app = web.Application()
-        # app.add_routes([web.get("/ws", self.wshandler)])
-        # web.run_app()
-        app = web.Application()
-        app.add_routes([web.get("/ws", self.wshandler)])
-
-        runner = web.AppRunner(app)
-        await runner.setup()
-        site = web.TCPSite(runner, self._address, self._port)
-        await site.start()
-        print(f"WebSocket: serving on {site.name!r}")
-
-
-async def main(args):
-    wsserver = WebSocketServer(WS_IP, WS_PORT)
-
-    server = RequestHandler(PROXY_IP, PROXY_PORT, wsserver)
-    server.forward_to(args[1], args[2])
-
-    await asyncio.gather(server.run(), wsserver.run())
-
-if __name__ == "__main__":
-    import sys
-
-    # loop = asyncio.get_event_loop()
-    try:
-        asyncio.run(main(sys.argv))
-        # loop.run_until_complete(
-        #     asyncio.gather(
-        #         main(sys.argv),
-
-        #         )
-    except KeyboardInterrupt:
-        print("Exiting.")
