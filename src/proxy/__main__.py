@@ -1,6 +1,6 @@
 import asyncio
 
-from proxy.proxy import RequestHandler
+from proxy.httpserver import HttpServer
 from proxy.websocket import WebSocketServer
 
 PROXY_IP = ""
@@ -11,7 +11,7 @@ WS_PORT = 8787
 async def main(args):
     wsserver = WebSocketServer(WS_IP, WS_PORT)
 
-    server = RequestHandler(PROXY_IP, PROXY_PORT, wsserver)
+    server = HttpServer(PROXY_IP, PROXY_PORT, wsserver)
     server.forward_to(args[1], args[2])
 
     await asyncio.gather(server.run(), wsserver.run())
