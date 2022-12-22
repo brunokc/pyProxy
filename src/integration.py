@@ -1,11 +1,12 @@
 import aiohttp
 import asyncio
 from enum import Enum
-from httprequest import HttpRequest
 import json
 import re
 import urllib.parse
 import xml.etree.ElementTree as ET
+
+from proxy.httprequest import HttpRequest
 
 def getint(node):
     return int(node.text)
