@@ -1,7 +1,7 @@
 import asyncio
 from enum import IntEnum
 
-from proxy.requesthandler import RequestHandler
+from proxy.httpserver import HttpServer
 from proxy.websocket import WebSocketServer
 
 PROXY_IP = ""
@@ -20,8 +20,7 @@ class ProxyServer:
 
     async def run(self):
         wsserver = WebSocketServer(WS_IP, WS_PORT)
-
-        server = RequestHandler(self._address, self._port, wsserver)
+        server = HttpServer(self._address, self._port, wsserver)
         # server.forward_to(args[1], args[2])
 
         await asyncio.gather(server.run(), wsserver.run())

@@ -13,7 +13,7 @@ from proxy.stream import StreamPair, MultiWriterStream
 
 BUFFER_SIZE = 1024
 
-class RequestHandler:
+class HttpServer:
     def __init__(self, address, port, wsserver):
         self._proxy_address = address
         self._proxy_port = port
