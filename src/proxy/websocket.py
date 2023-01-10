@@ -92,4 +92,4 @@ class WebSocketServer:
         await runner.setup()
         site = web.TCPSite(runner, self._address, self._port)
         await site.start()
-        print(f"WebSocket: serving on {site.name!r}")
+        print(f"WebSocket: serving on {self._address}:{self._port}")
