@@ -9,7 +9,7 @@ import xml.etree.ElementTree as ET
 from proxy.httprequest import HttpRequest
 
 def getint(node):
-    return int(node.text)
+    return 0 if node.text == "na" else int(node.text)
 
 def getfloat(node):
     return float(node.text) if node.text else 0.0
@@ -125,10 +125,10 @@ status_handler_map = {
 # <idu_status version="1.7">
 #     <idutype>furnace2stg</idutype>
 #     <pwmblower>off</pwmblower>
-#     <opstat>off</opstat>
-#     <iducfm>0</iducfm>
-#     <blwrpm>0</blwrpm>
-#     <statpress>0.00</statpress>
+#     <opstat>low</opstat>
+#     <iducfm>825</iducfm>
+#     <blwrpm>866</blwrpm>
+#     <statpress>0.50</statpress>
 #     <coiltemp>na</coiltemp>
 #     <inducerrpm>na</inducerrpm>
 #     <lat>na</lat>
@@ -142,6 +142,10 @@ idu_status_handler_map = {
     },
     "/idu_status/pwmblower": {
         "name": "?pwmBlower",
+        "handler": gettext
+    },
+    "/idu_status/opstat": {
+        "name": "operationStatus",
         "handler": gettext
     },
     "/idu_status/iducfm": {
