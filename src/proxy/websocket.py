@@ -1,6 +1,9 @@
 import json
+import logging
 from aiohttp import web, WSMsgType
 from enum import Enum
+
+_LOGGER = logging.getLogger(__name__)
 
 class StreamDirection(Enum):
     Outgoing = 1,
@@ -52,23 +55,24 @@ class WebSocketServer:
             args = data["args"]
             host = args["host"]
             self._intercept_clients.update({ host: ws })
-            print(f"WebSocket: registered LISTEN client for host {host} (caller: {clientip}:{port})")
+            _LOGGER.debug("registered LISTEN client for host %s (caller: %s:%d)",
+                host, clientip, port)
 
     async def handle_binary(self, data):
-        print("WebSocket: received binary payload")
-        print(data)
+        _LOGGER.debug("received binary payload")
+        _LOGGER.debug(data)
 
     async def wshandler(self, request):
         peername = request.transport.get_extra_info("peername")
         if peername is not None:
             clientip, port = peername
-        print(f"WebSocket: connection from {clientip}:{port}")
+        _LOGGER.debug(f"connection from %s:%d", clientip, port)
 
         ws = web.WebSocketResponse()
         await ws.prepare(request)
 
         async for msg in ws:
-            print(f"WebSocket: new message {msg!r}")
+            _LOGGER.debug("new message %s", msg.__repr__())
             if msg.type == WSMsgType.TEXT:
                 if msg.data == "close":
                     await ws.close()
@@ -77,12 +81,12 @@ class WebSocketServer:
             elif msg.type == WSMsgType.BINARY:
                 await self.handle_binary(msg.data)
             elif msg.type == WSMsgType.ERROR:
-                print(f"WebSocket: connection closed with exception {ws.exception()}")
+                _LOGGER.debug("connection closed with exception %s", ws.exception())
 
         # if host in self._intercept_clients:
         #     del self._intercept_clients[host]
 
-        print("WebSocket: connection closed")
+        _LOGGER.debug("connection closed")
 
     async def run(self):
         app = web.Application()
@@ -92,4 +96,4 @@ class WebSocketServer:
         await runner.setup()
         site = web.TCPSite(runner, self._address, self._port)
         await site.start()
-        print(f"WebSocket: serving on {self._address}:{self._port}")
+        _LOGGER.debug("serving on %s:%d", self._address, self._port)

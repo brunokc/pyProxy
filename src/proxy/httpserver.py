@@ -8,12 +8,15 @@ import async_timeout
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
 from enum import IntEnum
+import logging
 
 from proxy.callback import ProxyServerCallback, ProxyServerAction
 from proxy.httprequest import HttpRequest, HttpResponse
 from proxy.stream import StreamPair
 
 BUFFER_SIZE = 16 * 1024
+
+_LOGGER = logging.getLogger(__name__)
 
 class ProxyMode(IntEnum):
     ListenIn = 1
@@ -51,37 +54,32 @@ class HttpServer:
 
 
     async def pipe_stream(self, reader: StreamReader, writer: StreamWriter, n=-1, prefix=None):
-        # try:
-            bytes_left = 0
+        bytes_left = 0
+        if n > 0:
+            bytes_left = n
+            bytes_to_read = min(BUFFER_SIZE, bytes_left)
+            _LOGGER.debug("pipe_stream(%s): reading %d bytes", prefix, bytes_left)
+        else:
+            bytes_to_read = BUFFER_SIZE
+            _LOGGER.debug("pipe_stream(%s): reading until EOF", prefix)
+
+        while not reader.at_eof():
+            data = await reader.read(bytes_to_read)
+            bytes_read = len(data)
+            _LOGGER.debug("pipe_stream(%s): read(%d) = %d",
+                prefix, bytes_to_read, bytes_read)
+            if prefix:
+                _LOGGER.debug("pipe_stream(%s): %s", prefix, data.__repr__())
+            writer.write(data)
+            await writer.drain()
+
             if n > 0:
-                bytes_left = n
+                bytes_left -= bytes_read
+                _LOGGER.debug("pipe_stream(%s): bytes left: %d bytes", prefix, bytes_left)
+                if bytes_left == 0:
+                    break
                 bytes_to_read = min(BUFFER_SIZE, bytes_left)
-                print(f"pipe_stream({prefix}): reading {bytes_left} bytes")
-            else:
-                bytes_to_read = BUFFER_SIZE
-                print(f"pipe_stream({prefix}): reading until EOF")
 
-            while not reader.at_eof():
-                data = await reader.read(bytes_to_read)
-                bytes_read = len(data)
-                print(f"pipe_stream({prefix}): read({bytes_to_read}) = {bytes_read}")
-                if prefix:
-                    print(f"pipe_stream({prefix}): {data!r}", end=None)
-                writer.write(data)
-                await writer.drain()
-
-                if n > 0:
-                    bytes_left -= bytes_read
-                    print(f"pipe_stream({prefix}): bytes left: {bytes_left} bytes")
-                    if bytes_left == 0:
-                        break
-                    bytes_to_read = min(BUFFER_SIZE, bytes_left)
-
-        # finally:
-        #     # print("pipe_stream: closing writer")
-        #     # writer.close()
-        #     # await writer.wait_closed()
-        #     pass
 
     async def connect_streams(
         self, local_stream: StreamPair, remote_stream: StreamPair):
@@ -99,7 +97,7 @@ class HttpServer:
             )
         _, pending = await asyncio.wait(tasks, return_when=asyncio.FIRST_COMPLETED)
         for task in pending:
-            print(f"Proxy: cancelling task {task.get_name()}")
+            _LOGGER.debug("cancelling task %s", task.get_name())
             task.cancel()
 
     # async def http_handler_listenin(
@@ -125,14 +123,14 @@ class HttpServer:
 
     #     ws_incoming, ws_outgoing = self._wsserver.get_streams(host)
 
-    #     print(f"Proxy: connecting to {hostname}:{port}...")
+    #     _LOGGER.debug("connecting to %s: %d...", hostname, port)
     #     remote_reader, remote_writer = await asyncio.open_connection(hostname, port)
     #     if ws_incoming and ws_outgoing:
     #         writer = MultiWriterStream(writer, ws_incoming)
     #         remote_writer = MultiWriterStream(remote_writer, ws_outgoing)
 
     #     with closing(remote_writer):
-    #         print(f"Proxy: HTTP connection established to {hostname}:{port}")
+    #         _LOGGER.debug("HTTP connection established to %s:%d", hostname, port)
     #         # Send all the request data read so far first
     #         remote_writer.write(request.raw_request)
     #         await remote_writer.drain()
@@ -147,7 +145,7 @@ class HttpServer:
             port = request.url.port or 80
         else:
             if host:
-                print("get_proxy_target: falling back to Host header to determine server")
+                _LOGGER.debug("get_proxy_target: falling back to Host header to determine server")
                 hostname = host
                 port = 80
 
@@ -161,6 +159,7 @@ class HttpServer:
 
         target_hostname = None
         target_port = None
+        server_writer = None
         while True:
             request = HttpRequest(addr, client_reader)
             bytes_read = await request.read_headers()
@@ -179,17 +178,20 @@ class HttpServer:
                     server_writer.close()
                     await server_writer.wait_closed()
 
-                print(f"Proxy: connecting to {target_hostname}:{target_port}...")
+                _LOGGER.debug("connecting to %s:%d...", target_hostname,
+                    target_port)
                 server_reader, server_writer = await asyncio.open_connection(
                     target_hostname, target_port)
-                print(f"Proxy: HTTP connection established to {target_hostname}:{target_port}")
+                _LOGGER.debug("HTTP connection established to %s:%d",
+                    target_hostname, target_port)
 
-            print("Proxy: request phase")
+            _LOGGER.debug("request phase")
             proxy_action = await self._callback.on_new_request(request)
-            print(f"Proxy: request proxy action: {ProxyServerAction(proxy_action).name}")
+            _LOGGER.debug("request proxy action: %s",
+                ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
                 # Send the request line and headers to the server unaltered
-                print(f"Proxy: sending to server: {request.raw_request}")
+                _LOGGER.debug("sending to server: %s", request.raw_request)
                 server_writer.write(request.raw_request)
                 await server_writer.drain()
 
@@ -200,11 +202,12 @@ class HttpServer:
                         server_writer, request_length, prefix="=>")
 
             # Read server response
-            print("Proxy: response phase")
+            _LOGGER.debug("response phase")
             response = HttpResponse(server_reader)
             await response.read()
             proxy_action = await self._callback.on_new_response(response)
-            print(f"Proxy: response proxy action: {ProxyServerAction(proxy_action).name}")
+            _LOGGER.debug("response proxy action: %s",
+                ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
                 # Send the response line and headers back to the client unaltered
                 client_writer.write(response.raw_response)
@@ -219,7 +222,7 @@ class HttpServer:
         server_writer.close()
         await server_writer.wait_closed()
 
-        print("http_handler: done")
+        _LOGGER.debug("http_handler: done")
 
 
     async def https_handler(
@@ -230,7 +233,7 @@ class HttpServer:
         with closing(remote_writer):
             writer.write(b"HTTP/1.1 200 Connection Established\r\n\r\n")
             await writer.drain()
-            print("Proxy: HTTPS connection established")
+            _LOGGER.debug("HTTPS connection established")
 
             await self.connect_streams((reader, writer), (remote_reader, remote_writer))
 
@@ -238,7 +241,7 @@ class HttpServer:
     async def connection_handler(self, reader: StreamReader, writer: StreamWriter):
         async def session():
             addr = writer.get_extra_info('peername')
-            print(f"Proxy: connection from {addr!r}")
+            _LOGGER.debug("connection from %s", addr.__repr__())
 
             try:
                 async with async_timeout.timeout(30):
@@ -252,14 +255,15 @@ class HttpServer:
                         # elif request.method == 'CONNECT':  # https
                         #     await self.https_handler(reader, writer, request)
                         # else:
-                        #     print(f"Proxy: {request.method} method is not supported")
+                        #     _LOGGER.debug("%s method is not supported", request.method)
             except asyncio.IncompleteReadError as e:
-                print(f"Incomplete read: expected {e.expected} bytes, got {len(e.partial)} bytes")
+                _LOGGER.debug("incomplete read: expected %dbytes, got %d bytes",
+                    e.expected, len(e.partial))
                 e.with_traceback()
             except asyncio.TimeoutError:
-                print("Timeout")
+                _LOGGER.debug("timeout")
 
-            print("Proxy: closed connection")
+            _LOGGER.debug("closed connection")
 
         asyncio.create_task(session(), name="session")
 
@@ -268,7 +272,7 @@ class HttpServer:
         server = await asyncio.start_server(
             self.connection_handler, self._proxy_address, self._proxy_port)
         addr = server.sockets[0].getsockname()
-        print(f"Proxy: serving on {addr}")
+        _LOGGER.debug("serving on %s", addr)
 
         async with server:
             await server.serve_forever()

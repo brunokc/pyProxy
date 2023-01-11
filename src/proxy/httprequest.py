@@ -1,7 +1,10 @@
 import asyncio
+import logging
 from urllib.parse import urlparse
 from aiohttp.streams import StreamReader
 from .stream import MemoryStreamReader
+
+_LOGGER = logging.getLogger(__name__)
 
 class HttpRequest:
     def __init__(self, addr, reader: StreamReader):
@@ -14,7 +17,8 @@ class HttpRequest:
         self.url = None
         self.headers = { }
         self.body = b""
-        print(f"HttpRequest: clientip={self.clientip}, clientport={self.clientport}")
+        _LOGGER.debug("HttpRequest: clientip=%s, clientport=%d", self.clientip,
+            self.clientport)
 
     async def _read_headers(self):
         try:
@@ -25,7 +29,7 @@ class HttpRequest:
 
     async def read_headers(self):
         data = await self._read_headers()
-        print(f"HttpRequest: received {data}")
+        _LOGGER.debug(f"HttpRequest: received %s", data)
         if len(data) == 0:
             return 0
 
@@ -48,7 +52,7 @@ class HttpRequest:
 
         # self.body = b"".join(http_request_lines[body_index + 1:])
 
-        print(f"HttpRequest: {self}")
+        _LOGGER.debug("HttpRequest: %s", self)
         return len(data)
 
     def __str__(self):
@@ -83,7 +87,7 @@ class HttpResponse:
     async def read(self):
         # Read the response line and all the response headers
         data = await self._reader.readuntil(b"\r\n\r\n")
-        print(f"HttpResponse: received {data}")
+        _LOGGER.debug("HttpResponse: received %s", data)
 
         self.raw_response = data
         http_response_lines = data.split(b"\r\n")
