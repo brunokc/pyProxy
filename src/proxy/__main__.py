@@ -1,10 +1,22 @@
 import asyncio
+import logging
 
 from proxy.proxyserver import ProxyServer, ProxyMode
 from proxy.callback import ProxyServerCallback, ProxyServerAction
 
 PROXY_IP = ""
 PROXY_PORT = 8080
+
+_LOGGER = logging.getLogger(__name__)
+print("name: ", __name__)
+
+def setup_logging():
+    _LOGGER.setLevel(logging.DEBUG)
+
+    # create console handler and set level to debug
+    ch = logging.StreamHandler()
+    ch.setLevel(logging.DEBUG)
+    _LOGGER.addHandler(ch)
 
 class ProxyCallback(ProxyServerCallback):
     async def on_new_request(self, request) -> ProxyServerAction:
@@ -17,8 +29,7 @@ class ProxyCallback(ProxyServerCallback):
 
 
 if __name__ == "__main__":
-    import sys
-
+    setup_logging()
     server = ProxyServer(PROXY_IP, PROXY_PORT)
     callback = ProxyCallback()
     server.register_callback(callback, ProxyMode.Intercept)
