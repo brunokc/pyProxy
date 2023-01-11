@@ -1,7 +1,5 @@
-# import aiohttp
-import asyncio
-# from enum import Enum
 import json
+import logging
 import re
 import urllib.parse
 import xml.etree.ElementTree as ET
@@ -13,6 +11,8 @@ from proxy.callback import ProxyServerAction
 from proxy.proxyserver import ProxyServer, ProxyMode, ProxyServerCallback
 
 from .zone import *
+
+_LOGGER = logging.getLogger(__name__)
 
 PROXY_IP = ""
 PROXY_PORT = 8080
@@ -44,7 +44,7 @@ class RequestHandler(ProxyServerCallback):
         return values
 
     async def on_new_request(self, request):
-        print(f"Processing request {request.method} {request.url.path}")
+        _LOGGER.debug("processing request %s %s", request.method, request.url.path)
         if request.method == "POST":
             for path, map in response_handler_map.items():
                 match = re.match(path, request.raw_url)
@@ -54,17 +54,17 @@ class RequestHandler(ProxyServerCallback):
                         "serialNumber": sn
                     }
 
-                    print(f"Handling POST for {path}")
+                    _LOGGER.debug("handling POST for %s", path)
                     body = await request.read_body()
-                    print(f"Body ({len(body)} bytes): {body}")
+                    _LOGGER.debug("body (%d bytes): %s", len(body), body)
 
                     form_data = self.parse_form_data(body)
                     payload = form_data[b"data"]
-                    print(f"Payload: {payload}")
+                    _LOGGER.debug("payload: %s", payload)
 
                     tree = ET.fromstring(payload)
                     status.update(handle_xml_response(tree, map))
-                    print(json.dumps(status))
+                    _LOGGER.debug("state: %s", json.dumps(status))
                     break
 
         return ProxyServerAction.Forward
