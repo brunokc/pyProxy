@@ -14,12 +14,6 @@ class ProxyServer:
         self._wsserver = None
         self._callback = None
         self._proxy_mode = None
-        # self._forward_to_host = None
-        # self._forward_to_port = 80
-
-    # def forward_to(self, host, port=80):
-    #     self._forward_to_host = host
-    #     self._forward_to_port = port
 
     def register_callback(self, callback: ProxyServerCallback, proxy_mode: ProxyMode):
         self._callback = callback
@@ -28,7 +22,6 @@ class ProxyServer:
     async def run(self):
         wsserver = WebSocketServer(WS_IP, WS_PORT)
         server = HttpServer(self._address, self._port, wsserver)
-        # server.forward_to(self._forward_to_host, self._forward_to_port)
         server.register_callback(self._callback, self._proxy_mode)
 
         await asyncio.gather(server.run(), wsserver.run())
