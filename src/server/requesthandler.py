@@ -54,7 +54,7 @@ class ConnexRequestHandler(ProxyServerCallback):
                     _LOGGER.debug("payload: %s", payload)
 
                     tree = ET.fromstring(payload)
-                    status.update(util.parse_xml_payload(tree, handler.handler_map))
+                    status.update(util.map_xml_payload(tree, handler.handler_map))
                     _LOGGER.debug("state: %s", json.dumps(status))
                     break
 
