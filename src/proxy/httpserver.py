@@ -18,10 +18,6 @@ BUFFER_SIZE = 16 * 1024
 
 _LOGGER = logging.getLogger(__name__)
 
-class ProxyMode(IntEnum):
-    ListenIn = 1
-    Intercept = 2
-
 
 class HttpServer:
     def __init__(self, address, port, wsserver):
@@ -29,9 +25,8 @@ class HttpServer:
         self._proxy_port = port
         self._wsserver = wsserver
 
-        # Default behavior
+        # Default callback that just forwards requests over to the destination
         self._callback = ProxyServerCallback()
-        self._proxy_mode = ProxyMode.Intercept
 
     # async def forward_stream(self, reader: StreamReader, writer: StreamWriter, event: asyncio.Event):
     #     while not event.is_set():
@@ -48,9 +43,8 @@ class HttpServer:
     #         await writer.drain()
 
 
-    def register_callback(self, callback: ProxyServerCallback, proxy_mode: ProxyMode):
+    def register_callback(self, callback: ProxyServerCallback):
         self._callback = callback
-        self._proxy_mode = proxy_mode
 
 
     async def pipe_stream(self, reader: StreamReader, writer: StreamWriter, n=-1, prefix=None):

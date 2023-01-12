@@ -8,21 +8,11 @@ import sys
 sys.path.append("..")
 
 from proxy.callback import ProxyServerAction
-from proxy.proxyserver import ProxyServer, ProxyMode, ProxyServerCallback
+from proxy.proxyserver import ProxyServer, ProxyServerCallback
 
-from .zone import *
+from .handlermaps import handlers, util
 
 _LOGGER = logging.getLogger(__name__)
-
-PROXY_IP = ""
-PROXY_PORT = 8080
-
-def handle_xml_response(node, handler_map):
-    status = { }
-    for k, v in handler_map.items():
-        subNode = findnode(node, k)
-        status.update({ v["name"]: v["handler"](subNode) })
-    return status
 
 # async def read(stream, length):
 #     bytes_to_read = length
@@ -32,29 +22,30 @@ def handle_xml_response(node, handler_map):
 #         bytes_to_read -= len(data)
 #     return data
 
-class RequestHandler(ProxyServerCallback):
-    def __init__(self):
-        pass
+class ConnexRequestHandler(ProxyServerCallback):
+    def __init__(self, proxy_ip: str, proxy_port: int):
+        self.proxy_ip = proxy_ip
+        self.proxy_port = proxy_port
 
+    """Convert URL encoded HTML form data into a dictionary"""
     def parse_form_data(self, form_data):
-        # Convert URL encoded HTML form data into a dictionary
         values = { k:urllib.parse.unquote(v) for (k,v) in
             [entry.split(b"=") for entry in form_data.split(b"&")]
         }
         return values
 
     async def on_new_request(self, request):
-        _LOGGER.debug("processing request %s %s", request.method, request.url.path)
-        if request.method == "POST":
-            for path, map in response_handler_map.items():
-                match = re.match(path, request.raw_url)
+        _LOGGER.debug("new request verb=%s path=%s", request.method, request.url.path)
+        for handler in handlers.response_handlers:
+            if request.method == handler.method:
+                match = re.match(handler.path, request.raw_url)
                 if match:
                     sn = match.group(1)
                     status = {
                         "serialNumber": sn
                     }
 
-                    _LOGGER.debug("handling POST for %s", path)
+                    _LOGGER.debug("handling %s for %s", handler.method, handler.path)
                     body = await request.read_body()
                     _LOGGER.debug("body (%d bytes): %s", len(body), body)
 
@@ -63,7 +54,7 @@ class RequestHandler(ProxyServerCallback):
                     _LOGGER.debug("payload: %s", payload)
 
                     tree = ET.fromstring(payload)
-                    status.update(handle_xml_response(tree, map))
+                    status.update(util.parse_xml_payload(tree, handler.handler_map))
                     _LOGGER.debug("state: %s", json.dumps(status))
                     break
 
@@ -73,6 +64,6 @@ class RequestHandler(ProxyServerCallback):
         return ProxyServerAction.Forward
 
     async def run(self):
-        server = ProxyServer(PROXY_IP, PROXY_PORT)
-        server.register_callback(self, ProxyMode.Intercept)
+        server = ProxyServer(self.proxy_ip, self.proxy_port)
+        server.register_callback(self)
         await server.run()

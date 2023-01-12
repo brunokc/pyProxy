@@ -1,7 +1,10 @@
 import asyncio
 import logging
 
-from .server import RequestHandler
+from .requesthandler import ConnexRequestHandler
+
+PROXY_IP = ""
+PROXY_PORT = 8080
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -21,7 +24,7 @@ def setup_logging():
 
 if __name__ == "__main__":
     setup_logging()
-    handler = RequestHandler()
+    handler = ConnexRequestHandler(PROXY_IP, PROXY_PORT)
     try:
         asyncio.run(handler.run())
     except KeyboardInterrupt:
