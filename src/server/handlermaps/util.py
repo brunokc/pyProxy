@@ -1,3 +1,4 @@
+"""XML utilities. Assumes usage of the xml.etree.ElementTree module"""
 
 def toint(node):
     return int(node.text)
@@ -12,6 +13,7 @@ def totext(node):
     return node.text
 
 def findnode(root, xpath):
+    """Finds an XML node, allowing for leading '/' or '.' to be used"""
     xpath = xpath[1:] if xpath.startswith("/") else xpath
     path_components = xpath.split("/")
     if path_components[0] == ".":
@@ -20,9 +22,10 @@ def findnode(root, xpath):
         return root.find("/".join(path_components[1:]))
     return None
 
-def parse_xml_payload(node, handler_map):
-    status = { }
+def map_xml_payload(node, handler_map):
+    """Converts an XML node into a dictionary based on the supplied map"""
+    result = { }
     for k, v in handler_map.items():
         subNode = findnode(node, k)
-        status.update({ v["name"]: v["handler"](subNode) })
-    return status
+        result.update({ v["name"]: v["handler"](subNode) })
+    return result
