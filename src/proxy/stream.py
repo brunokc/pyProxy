@@ -4,6 +4,7 @@ from typing import Tuple
 
 StreamPair = Tuple[StreamReader, StreamWriter]
 
+# Consider using io.BytesIO underneath
 class MemoryStreamReader(StreamReader):
     def __init__(self, data):
         self._data = data
