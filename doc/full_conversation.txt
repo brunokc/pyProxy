@@ -11,12 +11,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /Alive?sn=1117W005762 HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/Alive?sn=1117W005762",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346254337",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233462",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="HIdCA4IvGaJ19thGU23A0P9y8QA%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 5\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:22 GMT\r\nApigw-Requestid: edX9kghvoAMEYMA=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 0d4ebcaa87ba94709def0eaac9371e5a.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: fj2dgkzAR_tGXedwCBBXjaDBSYrRo516rlOEY6_-gG2V9Gy6907K6Q==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 5 bytes
 pipe_stream(<=): read(5) = 5
@@ -34,7 +34,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762 HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346422767",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233464",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="vxHQEJvXaklacl5n0btQMVNmShs%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 53245\r\n\r\n'
 pipe_stream(=>): reading 53245 bytes
@@ -157,7 +157,7 @@ pipe_stream(=>): b'%20id%3D%223%22%3E%3Cactivity%3Ehome%3C%2Factivity%3E%3Ctime%
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:25 GMT\r\netag: "de8a878621a04ffb12a1bfb1"\r\nApigw-Requestid: edX-AgXvIAMEYXw=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 d01e7742f82df0bbc1fb681d709ed69c.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: d4HXZbtlfDZ_RxwLYRCbTUu3eaq4PabEHnFCaU4ZRXyIeg4v5XW42g==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25399
 HttpRequest: received b''
@@ -171,7 +171,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/profile HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/profile",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="16732334667494",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233466",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="ZhOwLEzNbuDDNf3JKjvxJWc%2B10E%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 3364\r\n\r\n'
 pipe_stream(=>): reading 3364 bytes
@@ -186,7 +186,7 @@ pipe_stream(=>): b'al%3EN%2FA%3C%2Fssserial%3E%3Cssversion%3EN%2FA%3C%2Fssversio
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:26 GMT\r\nApigw-Requestid: edX-JhDXoAMEM6Q=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 2ab6211e66998c8b58132661a7e3cade.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: ZlZ-q2tSMbGvML_mMbUQ_cBBpW8LlVaSHsUFctHIBWyHf086sUfKVw==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25400
 HttpRequest: received b''
@@ -200,7 +200,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/dealer HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/dealer",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346732752",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233467",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="fKJd2LRcJ24sIXfZA6%2BiAe%2BGHOw%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 206\r\n\r\n'
 pipe_stream(=>): reading 206 bytes
@@ -209,7 +209,7 @@ pipe_stream(=>): b'data=%3Cdealer%20version%3D%221.7%22%3E%3Cpid%3E184164%3C%2Fp
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:27 GMT\r\netag: "3dbf322d7d0032c5a88729a4"\r\nApigw-Requestid: edX-Rh1zoAMEVew=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 35575576af8067e30cfb17c6b9fde8e2.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: XK78sZVOsvRLJv8i5UFtozW8IsZIfvt9leG2Xf-z4cBfEUcQEesrrQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25401
 HttpRequest: received b''
@@ -223,7 +223,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/idu_config HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/idu_config",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346856715",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233468",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="swn1RaLHhuIMWltMW9nQcx%2Bkl84%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 952\r\n\r\n'
 pipe_stream(=>): reading 952 bytes
@@ -232,7 +232,7 @@ pipe_stream(=>): b'data=%3Cidu_config%20version%3D%221.7%22%3E%3Cidutype%3Efurna
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:27 GMT\r\netag: "e1e2cbac3d4b3e9943c9e5ee"\r\nApigw-Requestid: edX-Xgx2oAMEMHQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 28390a4d24ed4fdccd685d99cd06cf4e.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: s3kfg89WnfJfVlcxR31409GnPTAUvIdqhk9QkFELEbFlGZnhuFc0ZA==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25402
 HttpRequest: received b''
@@ -246,7 +246,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/odu_config HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/odu_config",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346829185",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233468",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="vs92htdRIujbYw8LD1hgwlX3i9g%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1316\r\n\r\n'
 pipe_stream(=>): reading 1316 bytes
@@ -255,7 +255,7 @@ pipe_stream(=>): b'data=%3Codu_config%20version%3D%221.7%22%3E%3Codutype%3Eprote
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:28 GMT\r\netag: "6f6031d423ff9bfbc7e1ca14"\r\nApigw-Requestid: edX-eiy7IAMEbtQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 e95ec8f1dc02e32f0cb9e113963ceb4e.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: y6RtnU5CmE53K__QJX83gzU1VItyg1KtRfqAgPf0FduvcLHt-qtcbg==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25403
 HttpRequest: received b''
@@ -269,12 +269,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /weather/98052/forecast HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/weather/98052/forecast",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323346930373",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233469",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="1%2FgV1hMCoSCLz%2FJDlFoPEY8AK%2FI%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 1662\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:29 GMT\r\nApigw-Requestid: edX-kgx_IAMENoA=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 2324edbcb8fc72f617442c65f36a40fc.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: rVrkJhbhwVEWSYEDQwczCoQO2vUjWeuSqeIS7oNbvNJhk-6PhC3jDQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 1662 bytes
 pipe_stream(<=): read(1662) = 1662
@@ -292,7 +292,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/status HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/status",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347024544",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233470",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="jmlSeaER2zlnvSNBTDFlT6j6S5g%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 3718\r\n\r\n'
 pipe_stream(=>): reading 3718 bytes
@@ -304,7 +304,7 @@ pipe_stream(=>): b'f%3C%2Fhold%3E%3Cotmr%2F%3E%3Czoneconditioning%3Eactive_heat%
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 1169\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:29 GMT\r\nApigw-Requestid: edX-rhJloAMEMrQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 0d4ebcaa87ba94709def0eaac9371e5a.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: 9DWWSlvEWEQ3ZUU0Bt3PGYT1U74MqEybYpPTbXSln12ndGoks8XX_w==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 1169 bytes
 pipe_stream(<=): read(1169) = 1169
@@ -322,12 +322,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /time/ HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/time/",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347057792",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233470",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="OeGAx6heBP6%2F6sNk6bjBz6ryr0k%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 176\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:30 GMT\r\nApigw-Requestid: edX-zgEdIAMEM9g=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 2ab6211e66998c8b58132661a7e3cade.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: ObOXfnN26Q1jqkrlHD0Q57FvSQq35eVKse3JVyBocXGwMzy1LXqdlw==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 176 bytes
 pipe_stream(<=): read(176) = 176
@@ -345,12 +345,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /systems/1117W005762/utility_events HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/utility_events",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347131542",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233471",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="nXKIJdZO5sJGovuLEYwSdWoV7Pc%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 323\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:31 GMT\r\nApigw-Requestid: edX-4iNaoAMEaIQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 89791e6b21b9a30cc51cac1bc51cf098.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: C9FrZCaEmXWnz1ZR44kDZYuXIfXOn-MCbfJuo7_xxRzKPDmmrYL6WQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 323 bytes
 pipe_stream(<=): read(323) = 323
@@ -368,12 +368,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.ota.eng.bryant.com:80...
 Proxy: HTTP connection established to www.ota.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /manifest HTTP/1.1\r\nHost: www.ota.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.ota.eng.bryant.com/manifest",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347221599",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233472",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="fQiOqiKFyaP9lKjn6bdc%2B65B8SM%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 9104\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:30 GMT\r\nCache-Control: no-store,no-cache\r\nPragma: no-cache\r\nRequest-Context: appId=cid-v1:410257c9-6637-49c2-8e77-f41c77d059ee\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 a06140ffee86972bad90c57fc682df36.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA19-C3\r\nX-Amz-Cf-Id: oH-35CFnZvBsQ01kKKGPIvAQYqM3QR0eDifeev9h2JCdkjMzyENq5A==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 9104 bytes
 pipe_stream(<=): read(4096) = 4096
@@ -397,7 +397,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/energy HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/energy",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347323705",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233473",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="x5yznkknKpzNxC%2Bj5Pxb5kiqSzU%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 3933\r\n\r\n'
 pipe_stream(=>): reading 3933 bytes
@@ -415,7 +415,7 @@ pipe_stream(=>): b'%3E%3Cgas%3E144.00%3C%2Fgas%3E%3Creheat%3E0.00%3C%2Freheat%3E
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:33 GMT\r\nApigw-Requestid: edX_QhxSoAMEbFw=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 b13f158bdf9805ca47e07c0c35870c12.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: DzlsXkHHAG-G9LroRwVzSzJkPC_6gbtku2WuFTB6T_l6HogXNek9TA==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25409
 HttpRequest: received b''
@@ -429,7 +429,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/idu_status HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/idu_status",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347427058",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233474",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="1Vp6x2VD9BISpoVAJ0HZJ587lCE%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 444\r\n\r\n'
 pipe_stream(=>): reading 444 bytes
@@ -438,7 +438,7 @@ pipe_stream(=>): b'data=%3Cidu_status%20version%3D%221.7%22%3E%3Cidutype%3Efurna
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:34 GMT\r\nApigw-Requestid: edX_aigAoAMEYkg=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 ead78c395f4bede3ec6cd7ea180e3d3a.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: 6zLXI1sMjdHnQapAq5LDgdj14WYlM3OsQBPyFbThBy6NBqmR-5POcQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25410
 HttpRequest: received b''
@@ -452,7 +452,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/odu_status HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/odu_status",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347516922",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233475",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="SSrus19KNl359vBo89QA%2F0VGpxc%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 1236\r\n\r\n'
 pipe_stream(=>): reading 1236 bytes
@@ -464,7 +464,7 @@ pipe_stream(=>): b'eatstage%3E%3Cavailmincoolstage%3E4%3C%2Favailmincoolstage%3E
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:34 GMT\r\nApigw-Requestid: edX_di6goAMEVlQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 707e733794d52100fde0ab21bf0b1462.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: TGQS5C2LRElcLgDKRAh0sigQk94zdZrQuKaOMRsAmRwa6owEcJzCMg==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25411
 HttpRequest: received b''
@@ -478,7 +478,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/idu_faults HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/idu_faults",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="16732334756222",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233475",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="OadaeMwHf1IPwgMEaLrW3k8PKB4%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 434\r\n\r\n'
 pipe_stream(=>): reading 434 bytes
@@ -487,7 +487,7 @@ pipe_stream(=>): b'data=%3Cidu_faults%20version%3D%221.7%22%3E%3Csource%3Efurnac
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:35 GMT\r\nApigw-Requestid: edX_igwqIAMEYyA=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 02d90bf99fd6253b329a53c82f19e224.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: MdtPA_K21MEf6GGXUOZn6GAYxpUvpSye1e3jSzcxHbiWFkZUgqARHw==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25412
 HttpRequest: received b''
@@ -501,7 +501,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/odu_faults HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/odu_faults",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347511852",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233475",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="EaGX137QPW0sfaC6ZJxD9dYaUXk%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 118\r\n\r\n'
 pipe_stream(=>): reading 118 bytes
@@ -510,7 +510,7 @@ pipe_stream(=>): b'data=%3Codu_faults%20version%3D%221.7%22%3E%3Csource%3EHP%3C%
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:35 GMT\r\nApigw-Requestid: edX_ngykIAMEYDg=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 ebe4011a81a36e2bf678f69ce1711330.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: ZanwObobmrXwmPvCVtj5l49OyY1hnSHQW_StpcZQ2VSs8j_enLtfMw==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25413
 HttpRequest: received b''
@@ -524,7 +524,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/equipment_events HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/equipment_events",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347615488",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233476",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="ol4Y98%2BjP9lK7ROy8Xg0dut8KXk%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 3030\r\n\r\n'
 pipe_stream(=>): reading 3030 bytes
@@ -539,7 +539,7 @@ pipe_stream(=>): b'3E%3Coccurrences%3E1%3C%2Foccurrences%3E%3Cactive%3Eoff%3C%2F
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:36 GMT\r\nApigw-Requestid: edX_riSuoAMEVGA=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 707e733794d52100fde0ab21bf0b1462.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: TeC6XU82YTaYOygAzyKjUWfv9hrsNinAl6cneJzqnVEzl01CBLv8Tg==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25414
 HttpRequest: received b''
@@ -553,7 +553,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/history HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/history",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347628615",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233476",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="8C7owwiZWEuJ1gEhUzeEZWEd3iE%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 987\r\n\r\n'
 pipe_stream(=>): reading 987 bytes
@@ -562,7 +562,7 @@ pipe_stream(=>): b'data=%3Chistory%20version%3D%221.7%22%3E%3Cidu%3E%3Cpowercycl
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:36 GMT\r\nApigw-Requestid: edX_wgQqIAMEMoQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 0d4ebcaa87ba94709def0eaac9371e5a.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: q6_psOqkV81RVTW6LE8pp4klWu40NcV4xH2XnSRFrq2jm6BUXI_3wA==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25415
 HttpRequest: received b''
@@ -576,7 +576,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/root_cause HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/root_cause",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347732527",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233477",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="JDCoFduYJ793IMoEv4idFsE07bc%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 62\r\n\r\n'
 pipe_stream(=>): reading 62 bytes
@@ -585,7 +585,7 @@ pipe_stream(=>): b'data=%3Croot_cause%20version%3D%221.7%22%3E%3C%2Froot_cause%3
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 0\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:37 GMT\r\nApigw-Requestid: edX_zhOHoAMEYmQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 1481cc55c02c3a782ad420b6bac2cb32.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: TQGWHiWxNezTYCpQ-0KzKlrNgFqGQOgsqBdG541p_9AdKgsAVSCAYQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 HttpRequest: clientip=192.168.1.148, clientport=25416
 HttpRequest: received b''
@@ -599,7 +599,7 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'POST /systems/1117W005762/status HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/systems/1117W005762/status",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347739220",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233477",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="L8YuLVEUqLX%2BhI0ajq%2Fef7RHBBs%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\nContent-Length: 3718\r\n\r\n'
 pipe_stream(=>): reading 3718 bytes
@@ -614,7 +614,7 @@ pipe_stream(=>): b'3Eoff%3C%2Fhold%3E%3Cotmr%2F%3E%3Czoneconditioning%3Eactive_h
 pipe_stream(=>): bytes left: 0 bytes
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 1169\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:37 GMT\r\nApigw-Requestid: edX_4hdtoAMEYxg=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 68fadeb91f97256bb67b03bfca74d830.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: QwRtFk6rWWUs462A6ZWXKkTr-efajOxWb5hluT7fbbgpYTs-ijfb2g==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 1169 bytes
 pipe_stream(<=): read(1169) = 1169
@@ -632,12 +632,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /Alive?sn=1117W005762 HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/Alive?sn=1117W005762",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347824716",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233478",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="sPQ34%2By7ckVrm48qCxF%2BQL9%2Bt%2Bc%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: text/plain; charset=utf-8\r\nContent-Length: 5\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:37 GMT\r\nApigw-Requestid: edX_9gAGIAMEVYg=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 2ab6211e66998c8b58132661a7e3cade.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: V7nVqxWAPcH9Zaq7P1gtsFqvncxz_e2FWbC4ODWbgSBMR2QgUXgNbA==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 5 bytes
 pipe_stream(<=): read(5) = 5
@@ -655,12 +655,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /weather/98052/forecast HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/weather/98052/forecast",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347829145",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233478",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="TNhwUKTxQI1ATyrY7U8qWkaxxeM%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 1662\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:38 GMT\r\nApigw-Requestid: edYACiQhIAMEa0g=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 9c675215120a4ade8754c4357ef2f3ea.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: I_yiBExZigM47ly__F8jGUbWjyOAt4PdtAtFrg1lisp-v0geqvlFaQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 1662 bytes
 pipe_stream(<=): read(1662) = 1662
@@ -678,12 +678,12 @@ get_proxy_target: falling back to Host header to determine server
 Proxy: connecting to www.api.eng.bryant.com:80...
 Proxy: HTTP connection established to www.api.eng.bryant.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET /time/ HTTP/1.1\r\nHost: www.api.eng.bryant.com\r\nAuthorization: OAuth realm="http://www.api.eng.bryant.com/time/",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347945325",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233479",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="IcdHGuoEnI%2FsD5M9jl3hG8%2BETPs%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: application/xml\r\nContent-Length: 176\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:39 GMT\r\nApigw-Requestid: edYAIj6CoAMEaiQ=\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 2ab6211e66998c8b58132661a7e3cade.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA73-P1\r\nX-Amz-Cf-Id: nTn9t8uLOm2v8Kx-F6QU1QgPrRDgIZdVwBDy6qXQ3HeZr538QxZuRQ==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 176 bytes
 pipe_stream(<=): read(176) = 176
@@ -700,12 +700,12 @@ HttpRequest: {'url': ParseResult(scheme='http', netloc='www.ota.ing.carrier.com'
 Proxy: connecting to www.ota.ing.carrier.com:80...
 Proxy: HTTP connection established to www.ota.ing.carrier.com:80
 Proxy: request phase
-ProxyCallback:on_new_request: returning ProxyServerAction.Forward
+ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward
 Proxy: request proxy action: Forward
 Proxy: sending to server: b'GET http://www.ota.ing.carrier.com/releaseNotes/systxbbec-14.02.txt HTTP/1.1\r\nHost: www.ota.ing.carrier.com\r\nAuthorization: OAuth realm="http://www.ota.ing.carrier.com/releaseNotes/systxbbec-14.02.txt",oauth_consumer_key="9f73i0d2l9e7r587",oauth_nonce="167323347926261",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1673233479",oauth_token="1117W005762",oauth_version="1.0",oauth_signature="ysxxHm3%2BL1FL6jbKX4tp3dGLy3E%3D"\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\n'
 Proxy: response phase
 HttpResponse: received b'HTTP/1.1 200 OK\r\nContent-Type: text/plain\r\nContent-Length: 429\r\nConnection: keep-alive\r\nDate: Mon, 09 Jan 2023 05:04:39 GMT\r\nCache-Control: no-store,no-cache,no-transform\r\nPragma: no-cache\r\nRequest-Context: appId=cid-v1:410257c9-6637-49c2-8e77-f41c77d059ee\r\nX-Content-CRC: A5E9\r\nX-Current-Page: https://wa-ota.azurewebsites.net/releaseNotes/systxbbec-14.02.txt\r\nX-Cache: Miss from cloudfront\r\nVia: 1.1 ae06b19943a6bad1c1b12b79f7339498.cloudfront.net (CloudFront)\r\nX-Amz-Cf-Pop: SEA19-C3\r\nX-Amz-Cf-Id: RaLjnqNHAzaqh7Wr9FpWdPDwDCstXTOLmvRRqW8V2NSTd0SaWqxb4g==\r\n\r\n'
-ProxyCallback:on_new_response: returning ProxyServerAction.Forward
+ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward
 Proxy: response proxy action: Forward
 pipe_stream(<=): reading 429 bytes
 pipe_stream(<=): read(429) = 429

@@ -121,5 +121,5 @@ class MemoryStreamReader(StreamReader):
 #     async def drain(self):
 #         self.request.append_body(self.data)
 #         context = self.callback_context
-#         context.result = await context.callback.on_new_request(context.request)
+#         context.result = await context.callback.on_new_request_async(context.request)
 #         self.data = b""

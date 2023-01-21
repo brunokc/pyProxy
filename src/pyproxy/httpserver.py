@@ -180,7 +180,7 @@ class HttpServer:
                     target_hostname, target_port)
 
             _LOGGER.debug("request phase")
-            proxy_action = await self._callback.on_new_request(request)
+            proxy_action = await self._callback.on_new_request_async(request)
             _LOGGER.debug("request proxy action: %s",
                 ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
@@ -199,7 +199,7 @@ class HttpServer:
             _LOGGER.debug("response phase")
             response = HttpResponse(server_reader)
             await response.read()
-            proxy_action = await self._callback.on_new_response(response)
+            proxy_action = await self._callback.on_new_response_async(response)
             _LOGGER.debug("response proxy action: %s",
                 ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
