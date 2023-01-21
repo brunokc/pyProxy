@@ -41,11 +41,11 @@ class RequestHandler(ProxyServerCallback):
         self.proxy_ip = proxy_ip
         self.proxy_port = proxy_port
 
-    async def on_new_request(self, request):
+    async def on_new_request_async(self, request):
         """Do something with the request here"""
         return ProxyServerAction.Forward
 
-    async def on_new_response(self, response):
+    async def on_new_response_async(self, response):
         """Do something with the response here"""
         return ProxyServerAction.Forward
 

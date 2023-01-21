@@ -19,12 +19,12 @@ def setup_logging():
     _LOGGER.addHandler(ch)
 
 class ProxyCallback(ProxyServerCallback):
-    async def on_new_request(self, request) -> ProxyServerAction:
-        print("ProxyCallback:on_new_request: returning ProxyServerAction.Forward")
+    async def on_new_request_async(self, request) -> ProxyServerAction:
+        print("ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
 
-    async def on_new_response(self, response) -> ProxyServerAction:
-        print("ProxyCallback:on_new_response: returning ProxyServerAction.Forward")
+    async def on_new_response_async(self, response) -> ProxyServerAction:
+        print("ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
 
 
