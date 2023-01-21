@@ -2,6 +2,7 @@ import asyncio
 import logging
 from urllib.parse import urlparse
 from aiohttp.streams import StreamReader
+
 from .stream import MemoryStreamReader
 
 _LOGGER = logging.getLogger(__name__)

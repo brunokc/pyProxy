@@ -1,8 +1,8 @@
 import asyncio
 import logging
 
-from proxy.proxyserver import ProxyServer, ProxyMode
-from proxy.callback import ProxyServerCallback, ProxyServerAction
+from .proxyserver import ProxyServer
+from .callback import ProxyServerCallback, ProxyServerAction
 
 PROXY_IP = ""
 PROXY_PORT = 8080
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     setup_logging()
     server = ProxyServer(PROXY_IP, PROXY_PORT)
     callback = ProxyCallback()
-    server.register_callback(callback, ProxyMode.Intercept)
+    server.register_callback(callback)
     try:
         asyncio.run(server.run())
     except KeyboardInterrupt:

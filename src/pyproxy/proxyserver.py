@@ -1,8 +1,8 @@
 import asyncio
 
-from proxy.httpserver import HttpServer
-from proxy.callback import ProxyServerCallback
-from proxy.websocket import WebSocketServer
+from .httpserver import HttpServer
+from .callback import ProxyServerCallback
+from .websocket import WebSocketServer
 
 WS_IP = ""
 WS_PORT = 8787
