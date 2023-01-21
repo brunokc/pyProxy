@@ -10,9 +10,9 @@ from contextlib import closing
 from enum import IntEnum
 import logging
 
-from proxy.callback import ProxyServerCallback, ProxyServerAction
-from proxy.httprequest import HttpRequest, HttpResponse
-from proxy.stream import StreamPair
+from .callback import ProxyServerCallback, ProxyServerAction
+from .httprequest import HttpRequest, HttpResponse
+from .stream import StreamPair
 
 BUFFER_SIZE = 16 * 1024
 
