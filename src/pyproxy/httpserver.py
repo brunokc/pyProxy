@@ -7,7 +7,6 @@ import asyncio
 import async_timeout
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
-from enum import IntEnum
 import logging
 
 from .callback import ProxyServerCallback, ProxyServerAction
@@ -20,27 +19,12 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class HttpServer:
-    def __init__(self, address, port, wsserver):
+    def __init__(self, address, port):
         self._proxy_address = address
         self._proxy_port = port
-        self._wsserver = wsserver
 
         # Default callback that just forwards requests over to the destination
         self._callback = ProxyServerCallback()
-
-    # async def forward_stream(self, reader: StreamReader, writer: StreamWriter, event: asyncio.Event):
-    #     while not event.is_set():
-    #         try:
-    #             data = await asyncio.wait_for(reader.read(BUFFER_SIZE), 1)
-    #         except asyncio.TimeoutError:
-    #             continue
-
-    #         if data == b'':  # when it closed
-    #             event.set()
-    #             break
-
-    #         writer.write(data)
-    #         await writer.drain()
 
 
     def register_callback(self, callback: ProxyServerCallback):
@@ -94,42 +78,6 @@ class HttpServer:
             _LOGGER.debug("cancelling task %s", task.get_name())
             task.cancel()
 
-    # async def http_handler_listenin(
-    #     self,
-    #     reader: StreamReader,
-    #     writer: StreamWriter,
-    #     request: HttpRequest):
-
-    #     host = request.headers["Host"] if "Host" in request.headers else None
-
-    #     if request.url.hostname:
-    #         hostname = request.url.hostname # or self._forward_to_host
-    #         port = request.url.port or 80 #self._forward_to_port
-    #     else:
-    #         if host:
-    #             hostname = host
-    #             port = 80
-
-    #     # By default, we just forward the request and response along. This should
-    #     # cover for the case where there's no callback registered, so it's a
-    #     # safe default.
-    #     proxy_action = ProxyServerAction.Forward
-
-    #     ws_incoming, ws_outgoing = self._wsserver.get_streams(host)
-
-    #     _LOGGER.debug("connecting to %s: %d...", hostname, port)
-    #     remote_reader, remote_writer = await asyncio.open_connection(hostname, port)
-    #     if ws_incoming and ws_outgoing:
-    #         writer = MultiWriterStream(writer, ws_incoming)
-    #         remote_writer = MultiWriterStream(remote_writer, ws_outgoing)
-
-    #     with closing(remote_writer):
-    #         _LOGGER.debug("HTTP connection established to %s:%d", hostname, port)
-    #         # Send all the request data read so far first
-    #         remote_writer.write(request.raw_request)
-    #         await remote_writer.drain()
-
-    #         await self.connect_streams((reader, writer), (remote_reader, remote_writer))
 
     def get_proxy_target(self, request):
         host = request.headers["Host"] if "Host" in request.headers else None
@@ -145,6 +93,7 @@ class HttpServer:
 
         return hostname, port
 
+
     async def http_handler(
         self,
         addr,
@@ -155,6 +104,7 @@ class HttpServer:
         target_port = None
         server_writer = None
         while True:
+            # Read request from client
             request = HttpRequest(addr, client_reader)
             bytes_read = await request.read_headers()
             if bytes_read == 0:
@@ -162,8 +112,9 @@ class HttpServer:
 
             if request.method == 'CONNECT':  # https
                 await self.https_handler(client_reader, client_writer, request)
-                return
+                break
 
+            # Evaluate if we need to connect to a new target
             new_hostname, new_port = self.get_proxy_target(request)
             if target_hostname != new_hostname and target_port != new_port:
                 target_hostname = new_hostname

@@ -2,10 +2,6 @@ import asyncio
 
 from .httpserver import HttpServer
 from .callback import ProxyServerCallback
-from .websocket import WebSocketServer
-
-WS_IP = ""
-WS_PORT = 8787
 
 class ProxyServer:
     def __init__(self, address, port):
@@ -18,8 +14,6 @@ class ProxyServer:
         self._callback = callback
 
     async def run(self):
-        wsserver = WebSocketServer(WS_IP, WS_PORT)
-        server = HttpServer(self._address, self._port, wsserver)
+        server = HttpServer(self._address, self._port)
         server.register_callback(self._callback)
-
-        await asyncio.gather(server.run(), wsserver.run())
+        await server.run()
