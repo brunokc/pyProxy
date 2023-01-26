@@ -9,6 +9,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 def parse_form_data(form_data):
+    """Convert URL encoded HTML form data into a dictionary"""
     values = { k:unquote(v) for (k,v) in
         [entry.split(b"=") for entry in form_data.split(b"&")]
     }
