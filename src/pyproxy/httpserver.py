@@ -150,7 +150,7 @@ class HttpServer:
             _LOGGER.debug("response phase")
             response = HttpResponse(server_reader)
             await response.read()
-            proxy_action = await self._callback.on_new_response_async(response)
+            proxy_action = await self._callback.on_new_response_async(request, response)
             _LOGGER.debug("response proxy action: %s",
                 ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
