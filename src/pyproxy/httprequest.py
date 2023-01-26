@@ -1,11 +1,19 @@
 import asyncio
 import logging
-from urllib.parse import urlparse
+from urllib.parse import urlparse, unquote
 from aiohttp.streams import StreamReader
 
 from .stream import MemoryStreamReader
 
 _LOGGER = logging.getLogger(__name__)
+
+
+def parse_form_data(form_data):
+    values = { k:unquote(v) for (k,v) in
+        [entry.split(b"=") for entry in form_data.split(b"&")]
+    }
+    return values
+
 
 class HttpRequest:
     def __init__(self, addr, reader: StreamReader):
