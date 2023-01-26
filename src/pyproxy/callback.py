@@ -1,7 +1,8 @@
 from asyncio.streams import StreamReader
 from enum import IntEnum
-from httprequest import HttpRequest, HttpResponse
 from typing import Union
+
+from .httprequest import HttpRequest, HttpResponse
 
 """
 
