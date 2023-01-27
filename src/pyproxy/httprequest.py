@@ -43,13 +43,13 @@ class HttpRequestResponseBase:
         else:
             return self._reader
 
-    def get_request_length(self):
+    def get_content_length(self):
         return int(self.headers["Content-Length"]
             if "Content-Length" in self.headers else -1)
 
     async def read_body(self):
         if not self.body:
-            self.body = await self._reader.readexactly(self.get_request_length())
+            self.body = await self._reader.readexactly(self.get_content_length())
         return self.body
 
 
