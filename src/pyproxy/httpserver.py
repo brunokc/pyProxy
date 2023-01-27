@@ -141,7 +141,7 @@ class HttpServer:
                 await server_writer.drain()
 
                 # For requests that have a body, send the body next
-                request_length = request.get_request_length()
+                request_length = request.get_content_length()
                 if request_length > 0:
                     await self.pipe_stream(request.get_streamreader(),
                         server_writer, request_length, prefix="=>")
@@ -159,7 +159,7 @@ class HttpServer:
                 await client_writer.drain()
 
                 # For responses that have a body, send the body next
-                response_length = response.get_response_length()
+                response_length = response.get_content_length()
                 if response_length > 0:
                     await self.pipe_stream(response.get_streamreader(),
                         client_writer, response_length, prefix="<=")
