@@ -1,5 +1,19 @@
 [project]
+name = "pyproxy"
+authors = [
+    { name = "Bruno Kraychete da Costa", email = "brunokc@kraychete.com" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+]
+description = "A simple programmatic HTTP proxy"
+dynamic = ["version"]
 
+[tool.setuptools.dynamic]
+version = { attr = "pyproxy.__version__" }
+
+[tool.setuptools.package-data]
+pyproxy = ["py.typed"]
 
 [build-system]
 requires = ["setuptools"]
