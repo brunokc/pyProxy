@@ -2,14 +2,14 @@ import asyncio
 import logging
 from urllib.parse import urlparse, unquote, ParseResult
 from asyncio.streams import StreamReader
-from typing import Dict
+from typing import Dict, List, Tuple
 
 from .stream import MemoryStreamReader
 
 _LOGGER = logging.getLogger(__name__)
 
 
-def parse_form_data(form_data):
+def parse_form_data(form_data: bytes) -> Dict[bytes, str]:
     """Convert URL encoded HTML form data into a dictionary"""
     values = { k:unquote(v) for (k,v) in
         [entry.split(b"=") for entry in form_data.split(b"&")]
@@ -23,14 +23,14 @@ class HttpRequestResponseBase:
         self.headers: Dict[str, str] = { }
         self.body = b""
 
-    async def _read_headers(self):
+    async def _read_headers(self) -> bytes:
         try:
             # Read the request line and all the request headers
             return await self._reader.readuntil(b"\r\n\r\n")
         except asyncio.IncompleteReadError as e:
             return e.partial
 
-    def _parse_headers(self, lines):
+    def _parse_headers(self, lines: List[bytes]) -> None:
         self.headers.clear()
         for line in lines:
             if not line:
@@ -38,17 +38,17 @@ class HttpRequestResponseBase:
             name, value = line.decode().split(": ")
             self.headers[name] = value
 
-    def get_streamreader(self):
+    def get_streamreader(self) -> StreamReader:
         if self.body:
             return MemoryStreamReader(self.body)
         else:
             return self._reader
 
-    def get_content_length(self):
+    def get_content_length(self) -> int:
         return int(self.headers["Content-Length"]
             if "Content-Length" in self.headers else -1)
 
-    async def read_body(self):
+    async def read_body(self) -> bytes:
         if not self.body:
             self.body = await self._reader.readexactly(self.get_content_length())
         return self.body
@@ -61,13 +61,13 @@ class HttpRequest(HttpRequestResponseBase):
     version: str
     url: ParseResult
 
-    def __init__(self, addr, reader: StreamReader):
+    def __init__(self, addr: Tuple[str, int], reader: StreamReader):
         super().__init__(reader)
         self.clientip, self.clientport = addr
         _LOGGER.debug("HttpRequest: clientip=%s, clientport=%d", self.clientip,
             self.clientport)
 
-    async def read_headers(self):
+    async def read_headers(self) -> int:
         data = await self._read_headers()
         _LOGGER.debug(f"HttpRequest: received %s", data)
         if len(data) == 0:
@@ -86,7 +86,7 @@ class HttpRequest(HttpRequestResponseBase):
         _LOGGER.debug("HttpRequest: %s", self)
         return len(data)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(dict(url=self.url, hostname=self.url.hostname, port=self.url.port,
             method=self.method))
 
@@ -100,7 +100,7 @@ class HttpResponse(HttpRequestResponseBase):
     def __init__(self, reader: StreamReader):
         super().__init__(reader)
 
-    async def read(self):
+    async def read(self) -> int:
         data = await self._read_headers()
         _LOGGER.debug("HttpResponse: received %s", data)
         if len(data) == 0:
@@ -114,7 +114,8 @@ class HttpResponse(HttpRequestResponseBase):
         self.http_version, self.response_code, self.response_text = response_line.split(" ")
 
         self._parse_headers(http_response_lines[1:])
+        return len(data)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return str(dict(http_version=self.http_version,
             response_code=self.response_code, response_text=self.response_text))
