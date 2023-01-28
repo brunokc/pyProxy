@@ -23,7 +23,7 @@ class ProxyCallback(ProxyServerCallback):
         print("ProxyCallback:on_new_request_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
 
-    async def on_new_response_async(self, response) -> ProxyServerAction:
+    async def on_new_response_async(self, request, response) -> ProxyServerAction:
         print("ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
 

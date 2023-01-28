@@ -6,7 +6,7 @@ import re
 import urllib.parse
 import xml.etree.ElementTree as ET
 
-from proxy.httprequest import HttpRequest
+from pyproxy.httprequest import HttpRequest
 
 def getint(node):
     return 0 if node.text == "na" else int(node.text)

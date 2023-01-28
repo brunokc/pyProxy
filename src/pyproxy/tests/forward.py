@@ -1,6 +1,6 @@
 import asyncio
 
-from proxy.proxyserver import ProxyServer
+from pyproxy.proxyserver import ProxyServer
 
 PROXY_IP = ""
 PROXY_PORT = 8080

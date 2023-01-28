@@ -1,7 +1,8 @@
 import asyncio
 import logging
-from urllib.parse import urlparse, unquote
-from aiohttp.streams import StreamReader
+from urllib.parse import urlparse, unquote, ParseResult
+from asyncio.streams import StreamReader
+from typing import Dict
 
 from .stream import MemoryStreamReader
 
@@ -19,7 +20,7 @@ def parse_form_data(form_data):
 class HttpRequestResponseBase:
     def __init__(self, reader: StreamReader):
         self._reader = reader
-        self.headers = { }
+        self.headers: Dict[str, str] = { }
         self.body = b""
 
     async def _read_headers(self):
@@ -54,14 +55,15 @@ class HttpRequestResponseBase:
 
 
 class HttpRequest(HttpRequestResponseBase):
+    raw_request: bytes
+    method: str
+    raw_url: str
+    version: str
+    url: ParseResult
+
     def __init__(self, addr, reader: StreamReader):
         super().__init__(reader)
         self.clientip, self.clientport = addr
-        self.raw_request = None
-        self.method = None
-        self.raw_url = None
-        self.version = None
-        self.url = None
         _LOGGER.debug("HttpRequest: clientip=%s, clientport=%d", self.clientip,
             self.clientport)
 
@@ -90,12 +92,13 @@ class HttpRequest(HttpRequestResponseBase):
 
 
 class HttpResponse(HttpRequestResponseBase):
+    raw_response: bytes
+    http_version: str
+    response_code: str
+    response_text: str
+
     def __init__(self, reader: StreamReader):
         super().__init__(reader)
-        self.raw_response = None
-        self.http_version = None
-        self.response_code = None
-        self.response_text = None
 
     async def read(self):
         data = await self._read_headers()
