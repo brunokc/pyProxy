@@ -8,6 +8,7 @@ import async_timeout
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
 import logging
+from typing import Tuple
 
 from .callback import ProxyServerCallback, ProxyServerAction
 from .httprequest import HttpRequest, HttpResponse
@@ -19,7 +20,7 @@ _LOGGER = logging.getLogger(__name__)
 
 
 class HttpServer:
-    def __init__(self, address, port):
+    def __init__(self, address: str, port: int):
         self._proxy_address = address
         self._proxy_port = port
 
@@ -27,11 +28,14 @@ class HttpServer:
         self._callback = ProxyServerCallback()
 
 
-    def register_callback(self, callback: ProxyServerCallback):
+    def register_callback(self, callback: ProxyServerCallback) -> None:
         self._callback = callback
 
 
-    async def pipe_stream(self, reader: StreamReader, writer: StreamWriter, n=-1, prefix=None):
+    async def pipe_stream(
+        self, reader: StreamReader, writer: StreamWriter, n: int = -1, prefix: str = ""
+        ) -> None:
+
         bytes_left = 0
         if n > 0:
             bytes_left = n
@@ -60,7 +64,7 @@ class HttpServer:
 
 
     async def connect_streams(
-        self, local_stream: StreamPair, remote_stream: StreamPair):
+        self, local_stream: StreamPair, remote_stream: StreamPair) -> None:
 
         local_reader, local_writer = local_stream
         remote_reader, remote_writer = remote_stream
@@ -79,7 +83,7 @@ class HttpServer:
             task.cancel()
 
 
-    def get_proxy_target(self, request):
+    def get_proxy_target(self, request: HttpRequest) -> Tuple[str, int]:
         host = request.headers["Host"] if "Host" in request.headers else None
 
         if request.url.hostname:
@@ -96,9 +100,9 @@ class HttpServer:
 
     async def http_handler(
         self,
-        addr,
+        addr: Tuple[str, int],
         client_reader: StreamReader,
-        client_writer: StreamWriter):
+        client_writer: StreamWriter) -> None:
 
         target_hostname = None
         target_port = None
@@ -135,6 +139,7 @@ class HttpServer:
 
             _LOGGER.debug("request phase")
             proxy_action = await self._callback.on_new_request_async(request)
+            assert(isinstance(proxy_action, ProxyServerAction))
             _LOGGER.debug("request proxy action: %s",
                 ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
@@ -154,6 +159,7 @@ class HttpServer:
             response = HttpResponse(server_reader)
             await response.read()
             proxy_action = await self._callback.on_new_response_async(request, response)
+            assert(isinstance(proxy_action, ProxyServerAction))
             _LOGGER.debug("response proxy action: %s",
                 ProxyServerAction(proxy_action).name)
             if proxy_action == ProxyServerAction.Forward:
@@ -175,7 +181,7 @@ class HttpServer:
 
 
     async def https_handler(
-        self, reader: StreamReader, writer: StreamWriter, request: HttpRequest):
+        self, reader: StreamReader, writer: StreamWriter, request: HttpRequest) -> None:
 
         remote_reader, remote_writer = await asyncio.open_connection(
             request.url.hostname, request.url.port)
@@ -187,8 +193,8 @@ class HttpServer:
             await self.connect_streams((reader, writer), (remote_reader, remote_writer))
 
 
-    async def connection_handler(self, reader: StreamReader, writer: StreamWriter):
-        async def session():
+    async def connection_handler(self, reader: StreamReader, writer: StreamWriter) -> None:
+        async def session() -> None:
             addr = writer.get_extra_info('peername')
             _LOGGER.debug("connection from %s", addr.__repr__())
 
@@ -208,7 +214,6 @@ class HttpServer:
             except asyncio.IncompleteReadError as e:
                 _LOGGER.debug("incomplete read: expected %dbytes, got %d bytes",
                     e.expected, len(e.partial))
-                e.with_traceback()
             except asyncio.TimeoutError:
                 _LOGGER.debug("timeout")
 
@@ -217,7 +222,7 @@ class HttpServer:
         asyncio.create_task(session(), name="session")
 
 
-    async def run(self):
+    async def run(self) -> None:
         server = await asyncio.start_server(
             self.connection_handler, self._proxy_address, self._proxy_port)
         addr = server.sockets[0].getsockname()
