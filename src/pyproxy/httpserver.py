@@ -130,6 +130,9 @@ class HttpServer:
                 _LOGGER.debug("HTTP connection established to %s:%d",
                     target_hostname, target_port)
 
+            # assert(server_reader is not None)
+            assert(server_writer is not None)
+
             _LOGGER.debug("request phase")
             proxy_action = await self._callback.on_new_request_async(request)
             _LOGGER.debug("request proxy action: %s",
@@ -164,8 +167,9 @@ class HttpServer:
                     await self.pipe_stream(response.get_streamreader(),
                         client_writer, response_length, prefix="<=")
 
-        server_writer.close()
-        await server_writer.wait_closed()
+        if server_writer:
+            server_writer.close()
+            await server_writer.wait_closed()
 
         _LOGGER.debug("http_handler: done")
 
