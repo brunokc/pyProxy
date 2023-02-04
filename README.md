@@ -1,6 +1,6 @@
 # pyProxy
 
-A simple, programmatic HTTP proxy written in Python.
+A simple programmatic HTTP proxy written in Python.
 
 pyProxy was created to facilitate scenarios where one might need to intercept
 HTTP traffic. It allows for programmatic control of HTTP traffic, allowing for
@@ -10,7 +10,8 @@ they transit through pyProxy.
 ## Example
 
 The canonical example just creates a proxy server on a particular IP address and
-port and just forwards requests and responses as they arrive.
+port and just forwards requests and responses as they arrive. That's the default
+pyProxy behavior.
 
 ```python
 from proxy.callback import ProxyServerCallback, ProxyServerAction
@@ -38,8 +39,8 @@ PROXY_PORT = 8080
 
 class RequestHandler(ProxyServerCallback):
     def __init__(self, proxy_ip: str, proxy_port: int):
-        self.proxy_ip = proxy_ip
-        self.proxy_port = proxy_port
+        self._server = ProxyServer(proxy_ip, proxy_port)
+        self._server.register_callback(self)
 
     async def on_new_request_async(self, request):
         """Do something with the request here"""
@@ -50,9 +51,7 @@ class RequestHandler(ProxyServerCallback):
         return ProxyServerAction.Forward
 
     async def run(self):
-        server = ProxyServer(PROXY_IP, PROXY_PORT)
-        server.register_callback(self)
-        await server.run()
+        await self._server.run()
 
 if __name__ == "__main__":
     handler = RequestHandler(PROXY_IP, PROXY_PORT)
