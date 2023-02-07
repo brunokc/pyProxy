@@ -3,14 +3,23 @@ name = "pyproxy"
 authors = [
     { name = "Bruno Kraychete da Costa", email = "brunokc@kraychete.com" },
 ]
+description = "A simple programmatic HTTP proxy"
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-description = "A simple programmatic HTTP proxy"
-dynamic = ["version"]
+dynamic = ["version", "readme"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pyproxy.__version__" }
+readme = { file = ["README.md"] }
+
+#[tool.setuptools.packages.find]
+#where = ["pyproxy"]
+#where = ["src"]  # list of folders that contain the packages (["."] by default)
+#include = ["my_package*"]  # package names should match these glob patterns (["*"] by default)
+#include = ["pyproxy"]
+#exclude = ["my_package.tests*"]  # exclude packages matching these glob patterns (empty by default)
+#namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
 
 [tool.setuptools.package-data]
 pyproxy = ["py.typed"]
