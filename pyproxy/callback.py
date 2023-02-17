@@ -1,3 +1,4 @@
+from abc import ABC, abstractmethod
 from asyncio.streams import StreamReader
 from enum import IntEnum
 from typing import Union
@@ -39,16 +40,16 @@ class ProxyServerAction(IntEnum):
     Forward = 1
 
 
-class ProxyServerCallback:
+class ProxyServerCallback(ABC):
+    @abstractmethod
     async def on_new_request_async(
         self, request: HttpRequest) -> Union[ProxyServerAction, StreamReader]:
 
-        print("ProxyServerCallback:on_new_request_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
 
+    @abstractmethod
     async def on_new_response_async(
         self, request: HttpRequest, response: HttpResponse) -> Union[
             ProxyServerAction, StreamReader]:
 
-        print("ProxyServerCallback:on_new_response_async: returning ProxyServerAction.Forward")
         return ProxyServerAction.Forward
