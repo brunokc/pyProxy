@@ -1,5 +1,6 @@
 import aiohttp
 
+
 async def get(url, *args, **kargs):
     async with aiohttp.ClientSession() as session:
         print("client session created")

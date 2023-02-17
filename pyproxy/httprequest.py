@@ -1,8 +1,8 @@
 import asyncio
-import logging
-from urllib.parse import urlparse, unquote, ParseResult
 from asyncio.streams import StreamReader
+import logging
 from typing import Dict, List, Tuple
+from urllib.parse import ParseResult, unquote, urlparse
 
 from .stream import MemoryStreamReader
 

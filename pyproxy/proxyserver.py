@@ -5,6 +5,7 @@ from .httprequest import HttpRequest, HttpResponse
 from .httpserver import HttpServer, ProxyServerAction
 from .stream import StreamReader
 
+
 class AlwaysForwardProxyServerCallback(ProxyServerCallback):
     async def on_new_request_async(
         self, request: HttpRequest) -> Union[ProxyServerAction, StreamReader]:

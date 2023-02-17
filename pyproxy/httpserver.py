@@ -3,14 +3,15 @@ Python HTTPS proxy server with asyncio streams
 (based on the work found at https://gist.github.com/2minchul/609255051b7ffcde023be93572b25101)
 """
 
-from contextlib import closing
-import async_timeout
 import asyncio
 from asyncio.streams import StreamReader, StreamWriter
+from contextlib import closing
 import logging
 from typing import Tuple
 
-from .callback import ProxyServerCallback, ProxyServerAction
+import async_timeout
+
+from .callback import ProxyServerAction, ProxyServerCallback
 from .httprequest import HttpRequest, HttpResponse
 from .stream import StreamPair
 
