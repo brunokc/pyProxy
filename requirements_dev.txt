@@ -1,0 +1,7 @@
+-r requirements.txt
+-e .
+black
+isort
+pytest
+pytest-asyncio
+pytest-httpserver

@@ -3,10 +3,10 @@ Python HTTPS proxy server with asyncio streams
 (based on the work found at https://gist.github.com/2minchul/609255051b7ffcde023be93572b25101)
 """
 
-import asyncio
-import async_timeout
-from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
+import async_timeout
+import asyncio
+from asyncio.streams import StreamReader, StreamWriter
 import logging
 from typing import Tuple
 
@@ -23,13 +23,18 @@ class HttpServer:
     def __init__(self, address: str, port: int):
         self._proxy_address = address
         self._proxy_port = port
-
-        # Default callback that just forwards requests over to the destination
-        self._callback = ProxyServerCallback()
+        self._server = None
+        self._callback = None
 
 
     def register_callback(self, callback: ProxyServerCallback) -> None:
         self._callback = callback
+
+
+    async def close(self):
+        if self._server:
+            self._server.close()
+            await self._server.wait_closed()
 
 
     async def pipe_stream(
@@ -223,10 +228,10 @@ class HttpServer:
 
 
     async def run(self) -> None:
-        server = await asyncio.start_server(
+        self._server = await asyncio.start_server(
             self.connection_handler, self._proxy_address, self._proxy_port)
-        addr = server.sockets[0].getsockname()
+        addr = self._server.sockets[0].getsockname()
         _LOGGER.debug("serving on %s", addr)
 
-        async with server:
-            await server.serve_forever()
+        async with self._server:
+            await self._server.serve_forever()

@@ -9,7 +9,6 @@ PROXY_IP = ""
 PROXY_PORT = 8080
 
 _LOGGER = logging.getLogger(__name__)
-print("name: ", __name__)
 
 def setup_logging() -> None:
     _LOGGER.setLevel(logging.DEBUG)
