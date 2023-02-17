@@ -1,7 +1,7 @@
 import asyncio
 import logging
 
-from .callback import ProxyServerCallback, ProxyServerAction
+from .callback import ProxyServerAction, ProxyServerCallback
 from .httprequest import HttpRequest, HttpResponse
 from .proxyserver import ProxyServer
 

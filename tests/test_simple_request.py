@@ -1,10 +1,10 @@
 import asyncio
 import logging
 
-import aiorequests
 import pytest
 from pytest_httpserver import HTTPServer
 
+import aiorequests
 from pyproxy.proxyserver import ProxyServer
 
 OWN_IP = "192.168.1.182"
