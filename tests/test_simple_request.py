@@ -7,9 +7,9 @@ from pytest_httpserver import HTTPServer
 import aiorequests
 from pyproxy.proxyserver import ProxyServer
 
-OWN_IP = "192.168.1.182"
+OWN_IP = "127.0.0.1"
 PROXY_IP = ""
-PROXY_PORT = 8888
+PROXY_PORT = 9999
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -18,7 +18,7 @@ def setup_logging() -> None:
 
 @pytest.fixture(scope="session")
 def httpserver_listen_address():
-    return (OWN_IP, 8889)
+    return (OWN_IP, 9998)
 
 class TestSimpleRequests:
     async def get(self, *args, **kargs):
@@ -36,14 +36,15 @@ class TestSimpleRequests:
         httpserver.expect_request("/hello").respond_with_json(payload)
 
         # client_task = asyncio.create_task(self.get(httpserver.url_for("/hello")))
-        status, response = await self.get(httpserver.url_for("/hello"))
+        # status, response = await self.get(httpserver.url_for("/hello"))
+        response = await self.get(httpserver.url_for("/hello"))
         # await asyncio.wait([server_task, client_task], return_when=asyncio.FIRST_COMPLETED)
         # await client_task
         # status, response = await asyncio.wait([client_task])
 
         # status, response = client_task.result()
-        assert status == 200
-        assert response == payload
+        assert response.status == 200
+        assert await response.json() == payload
 
         # Close server and allow it to exit
         await server.close()
