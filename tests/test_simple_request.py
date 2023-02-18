@@ -17,17 +17,14 @@ logging.basicConfig(level=logging.DEBUG, format="%(name)s: %(message)s")
 
 @pytest.fixture(scope="session")
 def httpserver_listen_address():
-    _LOGGER.debug(">>> httpserver_listen_address")
     return (LOOPBACK, HTTP_SERVER_PORT)
 
 @pytest.fixture
 def aiorequest():
-    _LOGGER.debug(">>> aiorequest")
     return aiorequests.Requests(LOOPBACK, PROXY_PORT)
 
 @pytest.fixture
 async def proxy_server():
-    _LOGGER.debug(">>> proxy_server")
     server = ProxyServer(LOOPBACK, PROXY_PORT)
     server_task = asyncio.create_task(server.run(), name="server")
     yield server
