@@ -31,6 +31,7 @@ build-backend = "setuptools.build_meta"
 [tool.pytest.ini_options]
 log_cli = true
 log_level = "DEBUG"
+asyncio_mode = "auto"
 #testpaths = [
 #    "tests",
 #]
