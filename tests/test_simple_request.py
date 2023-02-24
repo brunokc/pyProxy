@@ -34,10 +34,26 @@ async def proxy_server():
 
 
 class TestSimpleRequests:
-    async def test_simple_request(self, httpserver: HTTPServer, proxy_server, aiorequest):
+    async def test_request_proxy_selects_host_from_url_in_get(
+        self, httpserver: HTTPServer, proxy_server, aiorequest):
+
         payload = { "message": "hello" }
         httpserver.expect_request("/hello").respond_with_json(payload)
 
         response = await aiorequest.get(httpserver.url_for("/hello"))
+        assert response.status == 200
+        assert await response.json() == payload
+
+    async def test_request_proxy_selects_host_from_host_header(
+        self, httpserver: HTTPServer, proxy_server):
+
+        payload = { "message": "hello" }
+        httpserver.expect_request("/hello").respond_with_json(payload)
+
+        aiorequest = aiorequests.Requests(LOOPBACK, PROXY_PORT)
+        aiorequest._proxy_entry = { }
+        headers = { "Host": f"{LOOPBACK}:{HTTP_SERVER_PORT}" }
+        response = await aiorequest.get(f"http://{LOOPBACK}:{PROXY_PORT}/hello",
+            headers=headers)
         assert response.status == 200
         assert await response.json() == payload
