@@ -43,13 +43,12 @@ class ProxyServerAction(IntEnum):
 class ProxyServerCallback(ABC):
     @abstractmethod
     async def on_new_request_async(
-        self, request: HttpRequest) -> Union[ProxyServerAction, StreamReader]:
+        self, request: HttpRequest) -> ProxyServerAction:
 
         return ProxyServerAction.Forward
 
     @abstractmethod
     async def on_new_response_async(
-        self, request: HttpRequest, response: HttpResponse) -> Union[
-            ProxyServerAction, StreamReader]:
+        self, request: HttpRequest, response: HttpResponse) -> ProxyServerAction:
 
         return ProxyServerAction.Forward
