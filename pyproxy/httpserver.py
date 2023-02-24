@@ -98,8 +98,13 @@ class HttpServer:
         else:
             if host:
                 _LOGGER.debug("get_proxy_target: falling back to Host header to determine server")
-                hostname = host
-                port = 80
+                if ":" in host:
+                    hostname, port = host.split(":")
+                    port = int(port)
+                else:
+                    hostname = host
+                    port = 80
+                _LOGGER.debug("get_proxy_target: hostname=%s; port=%d", hostname, port)
 
         return hostname, port
 
