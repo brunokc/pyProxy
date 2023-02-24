@@ -7,7 +7,7 @@ import asyncio
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
 import logging
-from typing import Tuple
+from typing import Optional, Tuple
 
 import async_timeout
 
@@ -24,15 +24,15 @@ class HttpServer:
     def __init__(self, address: str, port: int):
         self._proxy_address = address
         self._proxy_port = port
-        self._server = None
-        self._callback = None
+        self._server: asyncio.Server
+        self._callback: Optional[ProxyServerCallback] = None
 
 
     def register_callback(self, callback: ProxyServerCallback) -> None:
         self._callback = callback
 
 
-    async def close(self):
+    async def close(self) -> None:
         if self._server:
             self._server.close()
             await self._server.wait_closed()
@@ -141,13 +141,15 @@ class HttpServer:
                     target_hostname, target_port)
 
             # assert(server_reader is not None)
-            assert(server_writer is not None)
+            assert server_writer is not None
 
             _LOGGER.debug("request phase")
-            proxy_action = await self._callback.on_new_request_async(request)
-            assert(isinstance(proxy_action, ProxyServerAction))
-            _LOGGER.debug("request proxy action: %s",
-                ProxyServerAction(proxy_action).name)
+            proxy_action = ProxyServerAction.Forward
+            if self._callback:
+                proxy_action = await self._callback.on_new_request_async(request)
+                _LOGGER.debug("request proxy action: %s",
+                    ProxyServerAction(proxy_action).name)
+
             if proxy_action == ProxyServerAction.Forward:
                 # Send the request line and headers to the server unaltered
                 _LOGGER.debug("sending to server: %s", request.raw_request)
@@ -164,10 +166,13 @@ class HttpServer:
             _LOGGER.debug("response phase")
             response = HttpResponse(server_reader)
             await response.read()
-            proxy_action = await self._callback.on_new_response_async(request, response)
-            assert(isinstance(proxy_action, ProxyServerAction))
-            _LOGGER.debug("response proxy action: %s",
-                ProxyServerAction(proxy_action).name)
+
+            proxy_action = ProxyServerAction.Forward
+            if self._callback:
+                proxy_action = await self._callback.on_new_response_async(request, response)
+                _LOGGER.debug("response proxy action: %s",
+                    ProxyServerAction(proxy_action).name)
+
             if proxy_action == ProxyServerAction.Forward:
                 # Send the response line and headers back to the client unaltered
                 client_writer.write(response.raw_response)
