@@ -90,21 +90,23 @@ class HttpServer:
 
 
     def get_proxy_target(self, request: HttpRequest) -> Tuple[str, int]:
-        host = request.headers["Host"] if "Host" in request.headers else None
-
         if request.url.hostname:
+            _LOGGER.debug("get_proxy_target: using hostname/port from url")
             hostname = request.url.hostname
             port = request.url.port or 80
         else:
-            if host:
-                _LOGGER.debug("get_proxy_target: falling back to Host header to determine server")
-                if ":" in host:
-                    hostname, port = host.split(":")
-                    port = int(port)
-                else:
-                    hostname = host
-                    port = 80
-                _LOGGER.debug("get_proxy_target: hostname=%s; port=%d", hostname, port)
+            host = request.headers["Host"] if "Host" in request.headers else None
+            if not host:
+                raise RuntimeError("missing target from both url and host header")
+
+            _LOGGER.debug("get_proxy_target: falling back to Host header to determine server")
+            if ":" in host:
+                hostname, port_number = host.split(":")
+                port = int(port_number)
+            else:
+                hostname = host
+                port = 80
+            _LOGGER.debug("get_proxy_target: hostname=%s; port=%d", hostname, port)
 
         return hostname, port
 
@@ -217,23 +219,14 @@ class HttpServer:
             try:
                 async with async_timeout.timeout(30):
                     with closing(writer):
-                        # request = HttpRequest(addr, reader)
-                        # await request.read_headers()
-
                         await self.http_handler(addr, reader, writer)
-                        # if request.method in ("GET", "POST", "DELETE", "PUT", "HEAD"):
-                        #     await self.http_handler(addr, reader, writer)
-                        # elif request.method == 'CONNECT':  # https
-                        #     await self.https_handler(reader, writer, request)
-                        # else:
-                        #     _LOGGER.debug("%s method is not supported", request.method)
             except asyncio.IncompleteReadError as e:
                 _LOGGER.debug("incomplete read: expected %dbytes, got %d bytes",
                     e.expected, len(e.partial))
             except asyncio.TimeoutError:
                 _LOGGER.debug("timeout")
 
-            _LOGGER.debug("closed connection")
+            _LOGGER.debug("connection closed")
 
         asyncio.create_task(session(), name="session")
 
