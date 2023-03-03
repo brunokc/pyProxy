@@ -34,7 +34,7 @@ async def proxy_server():
 
 
 class TestSimpleRequests:
-    async def test_request_proxy_selects_host_from_url_in_get(
+    async def test_request_proxy_selects_host_from_get_url(
         self, httpserver: HTTPServer, proxy_server, aiorequest):
 
         payload = { "message": "hello" }
