@@ -3,7 +3,7 @@ from typing import Tuple
 
 StreamPair = Tuple[StreamReader, StreamWriter]
 
-# Consider using io.BytesIO underneath
+# TODO: Consider using io.BytesIO underneath
 class MemoryStreamReader(StreamReader):
     def __init__(self, data: bytes):
         self._data = data
@@ -25,4 +25,3 @@ class MemoryStreamReader(StreamReader):
 
     def at_eof(self) -> bool:
         return self._read_index == len(self._data) - 1
-
