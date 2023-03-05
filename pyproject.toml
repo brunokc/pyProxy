@@ -1,3 +1,7 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "pyproxy"
 authors = [
@@ -13,20 +17,8 @@ dynamic = ["version", "readme"]
 version = { attr = "pyproxy.__version__" }
 readme = { file = ["README.md"] }
 
-#[tool.setuptools.packages.find]
-#where = ["pyproxy"]
-#where = ["src"]  # list of folders that contain the packages (["."] by default)
-#include = ["my_package*"]  # package names should match these glob patterns (["*"] by default)
-#include = ["pyproxy"]
-#exclude = ["my_package.tests*"]  # exclude packages matching these glob patterns (empty by default)
-#namespaces = false  # to disable scanning PEP 420 namespaces (true by default)
-
 [tool.setuptools.package-data]
 pyproxy = ["py.typed"]
-
-[build-system]
-requires = ["setuptools"]
-build-backend = "setuptools.build_meta"
 
 [tool.pytest.ini_options]
 log_cli = true
