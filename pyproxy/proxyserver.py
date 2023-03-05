@@ -11,6 +11,9 @@ class ProxyServer:
     def register_callback(self, callback: ProxyServerCallback) -> None:
         self._server.register_callback(callback)
 
+    def set_options(self, **kwargs):
+        self._server.set_options(**kwargs)
+
     async def close(self) -> None:
         if self._server:
             await self._server.close()

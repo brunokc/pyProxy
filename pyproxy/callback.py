@@ -1,7 +1,5 @@
 from abc import ABC, abstractmethod
-from asyncio.streams import StreamReader
-from enum import IntEnum
-from typing import Union
+from enum import IntEnum, auto
 
 from .httprequest import HttpRequest, HttpResponse
 
@@ -34,10 +32,16 @@ For server response, the handler options are:
 - Handler forwards response to client as-is (default)
 - Handler intercepts response, modifies or replaces it and has it forwarded to client
 
+Note that there is no option to suppress a response to a client. Once a request
+is made, even if suppressed on its way to the server, it must be responded back
+to the client. If the request was suppressed on its way up, the handler becomes
+responsible for generating a response.
+
 """
 
 class ProxyServerAction(IntEnum):
-    Forward = 1
+    Forward = auto()
+    Suppress = auto()
 
 
 class ProxyServerCallback(ABC):

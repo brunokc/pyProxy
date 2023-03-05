@@ -5,7 +5,7 @@ import pytest
 from pytest_httpserver import HTTPServer
 
 import aiorequests
-from pyproxy.proxyserver import ProxyServer
+from pyproxy import ProxyServer
 
 LOOPBACK = "127.0.0.1"
 HTTP_SERVER_PORT = 9998
@@ -26,6 +26,7 @@ def aiorequest():
 @pytest.fixture
 async def proxy_server():
     server = ProxyServer(LOOPBACK, PROXY_PORT)
+    server.set_options(allow_loopback_target=True)
     server_task = asyncio.create_task(server.run(), name="server")
     yield server
     await server.close()

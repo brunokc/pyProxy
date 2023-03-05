@@ -6,7 +6,9 @@ Python HTTPS proxy server with asyncio streams
 import asyncio
 from asyncio.streams import StreamReader, StreamWriter
 from contextlib import closing
+from dataclasses import dataclass, asdict
 import logging
+import ipaddress
 from typing import Optional, Tuple
 
 import async_timeout
@@ -16,8 +18,13 @@ from .httprequest import HttpRequest, HttpResponse
 from .stream import StreamPair
 
 BUFFER_SIZE = 16 * 1024
+LOOPBACK_NETWORK = ipaddress.ip_network("127.0.0.0/8")
 
 _LOGGER = logging.getLogger(__name__)
+
+@dataclass
+class HttpServerOptions:
+    allow_loopback_target: bool = False
 
 
 class HttpServer:
@@ -26,10 +33,19 @@ class HttpServer:
         self._proxy_port = port
         self._server: asyncio.Server
         self._callback: Optional[ProxyServerCallback] = None
+        self._options = HttpServerOptions()
 
 
     def register_callback(self, callback: ProxyServerCallback) -> None:
         self._callback = callback
+
+
+    def set_options(self, **kwargs):
+        for option, value in kwargs.items():
+            if option not in asdict(self._options):
+                raise ValueError(f"invalid option '{option}'")
+            _LOGGER.info("HttpServerOption %s set to %s", option, value)
+            setattr(self._options, option, value)
 
 
     async def close(self) -> None:
@@ -111,6 +127,17 @@ class HttpServer:
         return hostname, port
 
 
+    def is_loopback(self, address):
+        if address == "localhost":
+            return True
+
+        try:
+            ip = ipaddress.ip_address(address)
+            return ip in LOOPBACK_NETWORK
+        except ValueError:
+            return False
+
+
     async def http_handler(
         self,
         addr: Tuple[str, int],
@@ -133,6 +160,12 @@ class HttpServer:
 
             # Evaluate if we need to connect to a new target
             new_hostname, new_port = self.get_proxy_target(request)
+            if (not self._options.allow_loopback_target
+                and self.is_loopback(new_hostname)):
+
+                _LOGGER.error("cannot have loopback as a proxy target")
+                break
+
             if target_hostname != new_hostname and target_port != new_port:
                 target_hostname = new_hostname
                 target_port = new_port
@@ -150,7 +183,7 @@ class HttpServer:
             # assert(server_reader is not None)
             assert server_writer is not None
 
-            _LOGGER.debug("request phase")
+            _LOGGER.debug(">>> request phase >>>")
             proxy_action = ProxyServerAction.Forward
             if self._callback:
                 proxy_action = await self._callback.on_new_request_async(request)
@@ -159,8 +192,9 @@ class HttpServer:
 
             if proxy_action == ProxyServerAction.Forward:
                 # Send the request line and headers to the server unaltered
-                _LOGGER.debug("sending to server: %s", request.raw_request)
-                server_writer.write(request.raw_request)
+                head = request.get_head()
+                _LOGGER.debug("sending to server: %s", head)
+                server_writer.write(head)
                 await server_writer.drain()
 
                 # For requests that have a body, send the body next
@@ -169,8 +203,11 @@ class HttpServer:
                     await self.pipe_stream(request.get_streamreader(),
                         server_writer, request_length, prefix="=>")
 
+            #
             # Read server response
-            _LOGGER.debug("response phase")
+            #
+
+            _LOGGER.debug("<<< response phase <<<")
             response = HttpResponse(server_reader)
             await response.read()
 
@@ -182,7 +219,9 @@ class HttpServer:
 
             if proxy_action == ProxyServerAction.Forward:
                 # Send the response line and headers back to the client unaltered
-                client_writer.write(response.raw_response)
+                head = response.get_head()
+                _LOGGER.debug("sending to client: %s", head)
+                client_writer.write(head)
                 await client_writer.drain()
 
                 # For responses that have a body, send the body next
