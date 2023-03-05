@@ -46,7 +46,7 @@ class RequestHandler(ProxyServerCallback):
         """Do something with the request here"""
         return ProxyServerAction.Forward
 
-    async def on_new_response_async(self, response):
+    async def on_new_response_async(self, request, response):
         """Do something with the response here"""
         return ProxyServerAction.Forward
 
