@@ -24,11 +24,10 @@ class ProxyCallback(ProxyServerCallback):
         return ProxyServerAction.Forward
 
     async def on_new_response_async(
-        self, request: HttpRequest, response: HttpResponse
-        ) -> ProxyServerAction:
+        self, action: ProxyServerAction, request: HttpRequest, response: HttpResponse
+        ) -> None:
 
         print("ProxyCallback:on_new_response_async: returning ProxyServerAction.Forward")
-        return ProxyServerAction.Forward
 
 
 if __name__ == "__main__":

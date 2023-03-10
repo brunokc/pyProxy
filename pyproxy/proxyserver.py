@@ -1,4 +1,4 @@
-from typing import Union
+from typing import Any, Union
 
 from .callback import ProxyServerCallback
 from .httpserver import HttpServer
@@ -11,7 +11,7 @@ class ProxyServer:
     def register_callback(self, callback: ProxyServerCallback) -> None:
         self._server.register_callback(callback)
 
-    def set_options(self, **kwargs):
+    def set_options(self, **kwargs: Any) -> None:
         self._server.set_options(**kwargs)
 
     async def close(self) -> None:
