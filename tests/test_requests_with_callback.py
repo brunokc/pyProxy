@@ -70,17 +70,3 @@ class TestRequestsWithCallback:
         assert callback.responses == 1
         assert response.status == 200
         assert await response.json() == payload
-
-    # async def test_request_proxy_selects_host_from_host_header(
-    #     self, httpserver: HTTPServer, proxy_server):
-
-    #     payload = { "message": "hello" }
-    #     httpserver.expect_request("/hello").respond_with_json(payload)
-
-    #     aiorequest = aiorequests.Requests(LOOPBACK, PROXY_PORT)
-    #     aiorequest._proxy_entry = { }
-    #     headers = { "Host": f"{LOOPBACK}:{HTTP_SERVER_PORT}" }
-    #     response = await aiorequest.get(f"http://{LOOPBACK}:{PROXY_PORT}/hello",
-    #         headers=headers)
-    #     assert response.status == 200
-    #     assert await response.json() == payload
