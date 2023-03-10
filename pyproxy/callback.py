@@ -47,12 +47,16 @@ class ProxyServerAction(IntEnum):
 class ProxyServerCallback(ABC):
     @abstractmethod
     async def on_new_request_async(
-        self, request: HttpRequest) -> ProxyServerAction:
+        self,
+        request: HttpRequest) -> ProxyServerAction:
 
-        return ProxyServerAction.Forward
+        pass
 
     @abstractmethod
     async def on_new_response_async(
-        self, request: HttpRequest, response: HttpResponse) -> ProxyServerAction:
+        self,
+        action: ProxyServerAction,
+        request: HttpRequest,
+        response: HttpResponse) -> None:
 
-        return ProxyServerAction.Forward
+        pass

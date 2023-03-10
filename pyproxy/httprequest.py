@@ -1,7 +1,7 @@
 import asyncio
 from asyncio.streams import StreamReader
 import logging
-from typing import Dict, List, Tuple
+from typing import Dict, List, Optional, Tuple
 from urllib.parse import ParseResult, unquote, urlparse
 
 from .const import *
@@ -19,19 +19,22 @@ def parse_form_data(form_data: bytes) -> Dict[bytes, str]:
 
 
 class HttpMessageBase:
-    def __init__(self, reader: StreamReader):
+    def __init__(self, reader: Optional[StreamReader]):
         self._reader = reader
-        self._start_line: str
+        self._start_line: str = ""
         self._headers: Dict[str, str] = { }
         self._body = b""
         self._dirty = False
 
     async def _read_headers(self) -> bytes:
-        try:
-            # Read the request line and all the request headers
-            return await self._reader.readuntil(CRLF + CRLF)
-        except asyncio.IncompleteReadError as e:
-            return e.partial
+        if self._reader:
+            try:
+                # Read the request line and all the request headers
+                return await self._reader.readuntil(CRLF + CRLF)
+            except asyncio.IncompleteReadError as e:
+                return e.partial
+        else:
+            return b''
 
     def _parse_headers(self, lines: List[bytes]) -> None:
         self._headers.clear()
@@ -42,13 +45,14 @@ class HttpMessageBase:
             self._headers[name] = value
 
     @property
-    def headers(self):
+    def headers(self) -> Dict[str, str]:
         return self._headers
 
     def get_streamreader(self) -> StreamReader:
         if self._body:
             return MemoryStreamReader(self._body)
         else:
+            assert self._reader is not None
             return self._reader
 
     def get_content_length(self) -> int:
@@ -57,13 +61,13 @@ class HttpMessageBase:
 
     async def read_body(self) -> bytes:
         if not self._body:
+            assert self._reader is not None
             self._body = await self._reader.readexactly(self.get_content_length())
         return self._body
 
     def set_body(self, body: bytes) -> None:
         self._body = body
-        if CONTENT_LENGTH in self._headers:
-            self._headers[CONTENT_LENGTH] = len(body)
+        self._headers[CONTENT_LENGTH] = str(len(body))
         self._dirty = True
 
 
@@ -99,7 +103,7 @@ class HttpRequest(HttpMessageBase):
         _LOGGER.debug("HttpRequest: %s", self)
         return len(data)
 
-    def get_head(self):
+    def get_head(self) -> bytes:
         """Returns the request start line and all headers."""
         return self.raw_request
 
@@ -109,13 +113,16 @@ class HttpRequest(HttpMessageBase):
 
 
 class HttpResponse(HttpMessageBase):
-    _raw_response: bytes
-    http_version: str
-    response_code: str
-    response_text: str
-
-    def __init__(self, reader: StreamReader):
+    def __init__(self, reader: Optional[StreamReader] = None):
+        self._raw_response: bytes = b""
+        self.http_version: str = ""
+        self.response_code: int = 0
+        self.response_text: str = ""
         super().__init__(reader)
+
+    def is_valid(self) -> bool:
+        return (len(self.http_version) > 0 and self.response_code > 0 and
+                len(self.response_text) > 0)
 
     async def read(self) -> int:
         data = await self._read_headers()
@@ -128,16 +135,27 @@ class HttpResponse(HttpMessageBase):
 
         # Split the response (first) line
         self._start_line = http_response_lines[0].decode()
-        self.http_version, self.response_code, self.response_text = self._start_line.split(" ")
+        self.http_version, response_code, self.response_text = self._start_line.split(" ")
+        self.response_code = int(response_code)
 
         self._parse_headers(http_response_lines[1:])
         return len(data)
 
-    def get_head(self):
+    def get_head(self) -> bytes:
         """Returns the status line and all headers."""
+        if not self.http_version:
+            raise AttributeError("HTTP version not set")
+        if not self.response_code:
+            raise AttributeError("response code not set")
+        if not self.response_text:
+            raise AttributeError("response text not set")
+
         if self._dirty:
             # Recalculate head (start line + headers)
             headers = [f"{k}: {v}".encode() for k, v in self._headers.items()]
+            if not self._start_line:
+                self._start_line = (f"{self.http_version} {self.response_code} "
+                    f"{self.response_text}")
             self._raw_response = (self._start_line.encode() + CRLF +
                 CRLF.join(headers) + CRLF + CRLF)
             self._dirty = False

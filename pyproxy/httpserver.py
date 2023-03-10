@@ -9,7 +9,7 @@ from contextlib import closing
 from dataclasses import dataclass, asdict
 import logging
 import ipaddress
-from typing import Optional, Tuple
+from typing import Any, Optional, Tuple
 
 import async_timeout
 
@@ -40,7 +40,7 @@ class HttpServer:
         self._callback = callback
 
 
-    def set_options(self, **kwargs):
+    def set_options(self, **kwargs: Any) -> None:
         for option, value in kwargs.items():
             if option not in asdict(self._options):
                 raise ValueError(f"invalid option '{option}'")
@@ -127,7 +127,7 @@ class HttpServer:
         return hostname, port
 
 
-    def is_loopback(self, address):
+    def is_loopback(self, address: str) -> bool:
         if address == "localhost":
             return True
 
@@ -187,8 +187,7 @@ class HttpServer:
             proxy_action = ProxyServerAction.Forward
             if self._callback:
                 proxy_action = await self._callback.on_new_request_async(request)
-                _LOGGER.debug("request proxy action: %s",
-                    ProxyServerAction(proxy_action).name)
+                _LOGGER.debug("proxy action: %s", proxy_action.name)
 
             if proxy_action == ProxyServerAction.Forward:
                 # Send the request line and headers to the server unaltered
@@ -208,27 +207,51 @@ class HttpServer:
             #
 
             _LOGGER.debug("<<< response phase <<<")
-            response = HttpResponse(server_reader)
-            await response.read()
 
-            proxy_action = ProxyServerAction.Forward
-            if self._callback:
-                proxy_action = await self._callback.on_new_response_async(request, response)
-                _LOGGER.debug("response proxy action: %s",
-                    ProxyServerAction(proxy_action).name)
-
+            # It only really makes sense to read a response from the server if
+            # we forwarded the request up to the server in the first place. If
+            # we have suppressed the request, the only option we have is to give
+            # the callback an opportunity to provide one.
             if proxy_action == ProxyServerAction.Forward:
-                # Send the response line and headers back to the client unaltered
-                head = response.get_head()
-                _LOGGER.debug("sending to client: %s", head)
-                client_writer.write(head)
-                await client_writer.drain()
+                response = HttpResponse(server_reader)
+                await response.read()
+            else:
+                response = HttpResponse()
 
-                # For responses that have a body, send the body next
-                response_length = response.get_content_length()
-                if response_length > 0:
-                    await self.pipe_stream(response.get_streamreader(),
-                        client_writer, response_length, prefix="<=")
+            if self._callback:
+                await self._callback.on_new_response_async(
+                    proxy_action, request, response)
+
+            # If weCheck if the callback provided a proper response. If nothing
+            # was provided, respond with 500 Internal Error back to the client.
+            if not response.is_valid():
+                _LOGGER.error("invalid response from callback. "
+                    "Sending internal error (500) to client.")
+
+                response.http_version = request.version
+                response.response_code = 500
+                response.response_text = "Internal Error"
+                response.set_body("""
+                <html>
+                    <title>Internal Application Error</title>
+                    <body>
+                        <h1>pyProxy Application Error</h1>
+                        <p>The application callback did not provide a valid HTTP
+                        response after suppressing a request.</p>
+                    </body>
+                </html>""".encode())
+
+            # Send the response line and headers back to the client unaltered
+            head = response.get_head()
+            _LOGGER.debug("sending to client: %s", head)
+            client_writer.write(head)
+            await client_writer.drain()
+
+            # For responses that have a body, send the body next
+            response_length = response.get_content_length()
+            if response_length > 0:
+                await self.pipe_stream(response.get_streamreader(),
+                    client_writer, response_length, prefix="<=")
 
         if server_writer:
             server_writer.close()
