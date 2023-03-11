@@ -11,11 +11,12 @@ description = "A simple programmatic HTTP proxy"
 classifiers = [
     "Programming Language :: Python :: 3",
 ]
-dynamic = ["version", "readme"]
+dynamic = ["version", "readme", "dependencies"]
 
 [tool.setuptools.dynamic]
 version = { attr = "pyproxy.__version__" }
 readme = { file = ["README.md"] }
+dependencies = { file = ["src/requirements.txt"] }
 
 [tool.setuptools.package-data]
 pyproxy = ["py.typed"]
