@@ -9,7 +9,11 @@ authors = [
 ]
 description = "A simple programmatic HTTP proxy"
 classifiers = [
-    "Programming Language :: Python :: 3",
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3.9",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
 ]
 dynamic = ["version", "readme", "dependencies"]
 
